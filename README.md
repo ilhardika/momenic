@@ -1,1 +1,3 @@
 # momenic
+
+first init
