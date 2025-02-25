@@ -59,6 +59,12 @@ function Navbar() {
           >
             Portfolio
           </Link>
+          <Link
+            to="/musik"
+            className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
+          >
+            Music
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -104,6 +110,13 @@ function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Portfolio
+            </Link>
+            <Link
+              to="/musik"
+              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              Music
             </Link>
           </div>
         </div>

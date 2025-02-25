@@ -4,6 +4,7 @@ import ThemePage from "./pages/ThemePage";
 import VideoPage from "./pages/VideoPage";
 import Navbar from "./components/Navbar";
 import Portfolio from "./pages/Portfolio";
+import Music from "./pages/Music"; // Add this import
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/tema" element={<ThemePage />} />
           <Route path="/video" element={<VideoPage />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/musik" element={<Music />} /> {/* Add this route */}
         </Routes>
       </div>
     </Router>

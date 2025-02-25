@@ -7,9 +7,8 @@ const useThemes = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(0); // 0 means all categories
-  const themesPerPage = 12; // Changed from 8 to 12
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const PER_PAGE = 12;
 
   // Updated categories array without category 3 and with proper names
   const categories = [
@@ -24,6 +23,30 @@ const useThemes = () => {
     { id: 9, name: "Party & Dinner" },
     { id: 10, name: "School & Graduation" },
   ];
+
+  // Filter themes based on search and category
+  const filteredThemes = themes.filter((theme) => {
+    const matchesSearch = theme.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 0 || theme.category_id === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredThemes.length / PER_PAGE);
+
+  // Get paginated themes
+  const paginatedThemes = filteredThemes.slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE
+  );
+
+  // Reset page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -45,90 +68,8 @@ const useThemes = () => {
     fetchThemes();
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300); // 300ms delay
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  const filterThemesByName = (themes, query) => {
-    if (!Array.isArray(themes)) return [];
-    if (!query.trim()) return themes;
-
-    const searchQuery = query.toLowerCase().trim();
-
-    return themes
-      .map((theme) => {
-        const themeName = theme.name.toLowerCase();
-        const themeSlug = theme.slug.toLowerCase();
-
-        // Calculate match score
-        let score = 0;
-
-        // Exact match gets highest score
-        if (themeName === searchQuery || themeSlug === searchQuery) {
-          score = 1;
-        }
-        // Starts with search query
-        else if (themeName.startsWith(searchQuery)) {
-          score = 0.8;
-        }
-        // Contains search query as a word
-        else if (
-          themeName.includes(` ${searchQuery}`) ||
-          themeName.includes(`${searchQuery} `)
-        ) {
-          score = 0.6;
-        }
-        // Contains search query anywhere
-        else if (themeName.includes(searchQuery)) {
-          score = 0.4;
-        }
-
-        return {
-          ...theme,
-          searchScore: score,
-        };
-      })
-      .filter((theme) => theme.searchScore > 0) // Only keep matches
-      .sort((a, b) => b.searchScore - a.searchScore); // Sort by relevance
-  };
-
-  const filterThemes = (themes, query, categoryId) => {
-    let filtered = [...themes];
-
-    // Filter by category first
-    if (categoryId > 0) {
-      filtered = filtered.filter((theme) => theme.category_id === categoryId);
-    }
-
-    // Then apply search filter if there's a query
-    if (query.trim()) {
-      filtered = filterThemesByName(filtered, query);
-    }
-
-    return filtered;
-  };
-
-  // Update filtered themes to use both search and category filters
-  const filteredThemes = filterThemes(
-    themes,
-    debouncedSearchQuery,
-    selectedCategory
-  );
-
-  const indexOfLastTheme = currentPage * themesPerPage;
-  const indexOfFirstTheme = indexOfLastTheme - themesPerPage;
-  const currentThemes = filteredThemes.slice(
-    indexOfFirstTheme,
-    indexOfLastTheme
-  );
-  const totalPages = Math.ceil(filteredThemes.length / themesPerPage);
-
   return {
-    themes: currentThemes,
+    themes: paginatedThemes,
     loading,
     error,
     currentPage,
@@ -136,7 +77,6 @@ const useThemes = () => {
     searchQuery,
     setSearchQuery,
     totalPages,
-    hasResults: filteredThemes.length > 0,
     selectedCategory,
     setSelectedCategory,
     categories,
