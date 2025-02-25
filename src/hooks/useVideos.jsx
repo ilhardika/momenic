@@ -1,30 +1,77 @@
 import { useState, useEffect } from "react";
 
 const BASE_URL = "https://momenic.webinvit.id";
+const CACHE_KEY = "videos-data";
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const PER_PAGE = 12;
 
 const useVideos = () => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [videos, setVideos] = useState(() => {
+    // Initialize from cache if available
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_DURATION) {
+        return data;
+      }
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState(!videos.length);
   const [error, setError] = useState(null);
   const [selectedType, setSelectedType] = useState("invitation");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter videos based on search query
+  const filteredVideos = videos.filter((video) => {
+    if (!searchQuery) return true;
+
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      video.title.toLowerCase().includes(searchLower) ||
+      video.category.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Calculate pagination from filtered results
+  const totalPages = Math.ceil(filteredVideos.length / PER_PAGE);
+  const paginatedVideos = filteredVideos.slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
+        // Check cache first for current type
+        const cached = localStorage.getItem(`${CACHE_KEY}-${selectedType}`);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            setVideos(data);
+            setLoading(false);
+            return;
+          }
+        }
+
         setLoading(true);
 
-        // Use the proxy service to fetch video data
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
           proxyUrl +
-            encodeURIComponent(`${BASE_URL}/video?type=${selectedType}`)
+            encodeURIComponent(`${BASE_URL}/video?type=${selectedType}`),
+          { signal: AbortSignal.timeout(5000) }
         );
         const html = await proxyResponse.text();
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
-
-        // Find all video cards
         const videoCards = doc.querySelectorAll(".card");
 
         const extractedVideos = Array.from(videoCards)
@@ -46,18 +93,15 @@ const useVideos = () => {
 
               if (!title) return null;
 
-              // Helper function to add 100000 to price
               const addToPrice = (priceStr) => {
                 const numericPrice = parseInt(priceStr.replace(/\D/g, ""));
                 return `Rp ${(numericPrice + 100000).toLocaleString("id-ID")}`;
               };
 
-              // Make sure URLs are absolute
               const imageUrl = img?.src?.startsWith("http")
                 ? img.src
                 : `${BASE_URL}${img?.src || ""}`;
 
-              // Generate video preview URL from title
               const videoId = title.toLowerCase().replace(/\s+/g, "-");
 
               return {
@@ -82,12 +126,27 @@ const useVideos = () => {
           })
           .filter(Boolean);
 
+        // Cache the results by type
+        localStorage.setItem(
+          `${CACHE_KEY}-${selectedType}`,
+          JSON.stringify({
+            data: extractedVideos,
+            timestamp: Date.now(),
+          })
+        );
+
         setVideos(extractedVideos);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch videos:", err);
         setError("Gagal memuat video");
-        setVideos([]);
+
+        // Try to use stale cache if available
+        const cached = localStorage.getItem(`${CACHE_KEY}-${selectedType}`);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setVideos(data);
+        }
       } finally {
         setLoading(false);
       }
@@ -97,11 +156,16 @@ const useVideos = () => {
   }, [selectedType]);
 
   return {
-    videos,
+    videos: paginatedVideos, // Return paginated & filtered videos
     loading,
     error,
     selectedType,
     setSelectedType,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    searchQuery,
+    setSearchQuery,
   };
 };
 

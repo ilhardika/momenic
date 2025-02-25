@@ -1,13 +1,30 @@
+import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 
-const Search = ({ value, onChange, placeholder = "Search..." }) => {
+const Search = ({
+  onSearch,
+  placeholder = "Search...",
+  initialValue = "",
+  debounceTime = 300,
+}) => {
+  const [value, setValue] = useState(initialValue);
+
+  // Debounce search to avoid too many updates
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onSearch(value);
+    }, debounceTime);
+
+    return () => clearTimeout(timer);
+  }, [value, onSearch, debounceTime]);
+
   return (
     <div className="relative max-w-xl mx-auto">
       <input
         type="text"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => setValue(e.target.value)}
         className="w-full px-5 py-4 pr-12 rounded-full border border-[#3F4D34]/20 
                  focus:outline-none focus:border-[#3F4D34]/40 
                  font-secondary text-[#3F4D34]"

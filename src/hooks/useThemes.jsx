@@ -1,14 +1,27 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const CACHE_KEY = "themes-data";
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const PER_PAGE = 12;
+
 const useThemes = () => {
-  const [themes, setThemes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [themes, setThemes] = useState(() => {
+    // Initialize from cache if available
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_DURATION) {
+        return data;
+      }
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState(!themes.length);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const PER_PAGE = 12;
 
   // Updated categories array without category 3 and with proper names
   const categories = [
@@ -51,21 +64,53 @@ const useThemes = () => {
   useEffect(() => {
     const fetchThemes = async () => {
       try {
+        // Check cache first
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            setThemes(data);
+            setLoading(false);
+            return;
+          }
+        }
+
         setLoading(true);
-        const response = await axios.get("https://satumomen.com/api/themes");
-        console.log("API Response:", response.data); // Debug log
-        setThemes(response.data.data || []);
+        const response = await axios.get("https://satumomen.com/api/themes", {
+          timeout: 5000, // Add timeout
+        });
+
+        const themesData = response.data.data || [];
+
+        // Cache the results
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            data: themesData,
+            timestamp: Date.now(),
+          })
+        );
+
+        setThemes(themesData);
         setError(null);
       } catch (err) {
-        console.error("API Error:", err); // Debug log
+        console.error("API Error:", err);
         setError("Failed to fetch themes");
-        setThemes([]);
+
+        // Try to use stale cache if available
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setThemes(data);
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchThemes();
+    if (!themes.length) {
+      fetchThemes();
+    }
   }, []);
 
   return {

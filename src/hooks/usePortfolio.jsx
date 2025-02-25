@@ -1,36 +1,74 @@
 import { useState, useEffect } from "react";
 
 const BASE_URL = "https://momenic.webinvit.id";
+const CACHE_KEY = "portfolio-data";
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const PER_PAGE = 12;
 
 const usePortfolio = () => {
-  const [portfolios, setPortfolios] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [portfolios, setPortfolios] = useState(() => {
+    // Initialize from cache if available
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_DURATION) {
+        return data;
+      }
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState(!portfolios.length);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter portfolios based on search
+  const filteredPortfolios = portfolios.filter(
+    (portfolio) =>
+      portfolio.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      portfolio.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredPortfolios.length / PER_PAGE);
+
+  // Get paginated portfolios
+  const paginatedPortfolios = filteredPortfolios.slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchPortfolios = async () => {
       try {
+        // Check cache first
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            setPortfolios(data);
+            setLoading(false);
+            return;
+          }
+        }
+
         setLoading(true);
 
-        const response = await fetch(`${BASE_URL}/portofolio`, {
-          mode: "no-cors",
-          credentials: "omit",
-          headers: {
-            Accept: "text/html",
-          },
-        });
-
-        // Since no-cors gives an opaque response, we'll use a proxy URL for assets
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/portofolio`)
+          proxyUrl + encodeURIComponent(`${BASE_URL}/portofolio`),
+          { signal: AbortSignal.timeout(5000) } // Add timeout
         );
         const html = await proxyResponse.text();
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
-        // Find all portfolio items
         const portfolioCards = doc.querySelectorAll(
           ".col-6.col-md-4.col-lg-3.mb-4"
         );
@@ -47,7 +85,6 @@ const usePortfolio = () => {
 
               if (!title || !img?.src) return null;
 
-              // Make sure URLs are absolute
               const imgUrl = img.src.startsWith("http")
                 ? img.src
                 : `${BASE_URL}${img.src}`;
@@ -69,20 +106,47 @@ const usePortfolio = () => {
           })
           .filter(Boolean);
 
+        // Cache the results
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            data: extractedPortfolios,
+            timestamp: Date.now(),
+          })
+        );
+
         setPortfolios(extractedPortfolios);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch portfolios:", err);
         setError("Gagal memuat portfolio");
+
+        // Try to use stale cache if available
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setPortfolios(data);
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPortfolios();
+    if (!portfolios.length) {
+      fetchPortfolios();
+    }
   }, []);
 
-  return { portfolios, loading, error };
+  return {
+    portfolios: paginatedPortfolios,
+    loading,
+    error,
+    currentPage,
+    setCurrentPage,
+    searchQuery,
+    setSearchQuery,
+    totalPages,
+  };
 };
 
 export default usePortfolio;
