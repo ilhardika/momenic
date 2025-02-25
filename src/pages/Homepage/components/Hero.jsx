@@ -16,7 +16,7 @@ const Hero = () => {
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-[#3F4D34]/10">
             <Sparkles className="w-4 h-4 text-[#3F4D34] mr-2" />
             <span className="font-secondary text-[#3F4D34] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm">
-              Momenic Digital Invitation 1
+              Momenic Digital Invitation
             </span>
           </div>
         </div>
