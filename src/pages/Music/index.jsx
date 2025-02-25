@@ -130,7 +130,7 @@ function Music() {
               {musics.map((item) => (
                 <div
                   key={item.id}
-                  className="group bg-white hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-200"
+                  className="group bg-white hover:bg-gray-50 p-4  transition-all duration-200"
                 >
                   <div className="flex items-center space-x-4">
                     <button
@@ -149,7 +149,7 @@ function Music() {
                       )}
                     </button>
                     <div className="flex-1 min-w-0">
-                      <h6 className="font-secondary text-lg text-[#3F4D34] font-medium truncate">
+                      <h6 className="font-secondary text-lg text-[#3F4D34] font-medium break-words whitespace-pre-wrap">
                         {item.title}
                       </h6>
                       <p className="text-sm text-gray-500 font-secondary">
