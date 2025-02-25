@@ -1,3 +1,4 @@
+import React from "react";
 import { MessageCircle, Sparkles } from "lucide-react";
 
 const Hero = () => {

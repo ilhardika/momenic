@@ -1,3 +1,4 @@
+import React from "react";
 import VideoList from "./components/VideoList";
 import FAQ from "./components/FAQ";
 

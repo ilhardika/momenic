@@ -1,3 +1,4 @@
+import React from "react";
 import ThemeList from "./components/ThemeList";
 
 function ThemePage() {

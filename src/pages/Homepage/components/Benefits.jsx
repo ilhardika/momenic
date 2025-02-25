@@ -1,3 +1,4 @@
+import React from "react";
 import { Infinity, Users, Pencil, Clock, Music, UserCheck } from "lucide-react";
 
 const Benefits = () => {

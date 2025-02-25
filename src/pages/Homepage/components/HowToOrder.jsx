@@ -1,3 +1,4 @@
+import React from "react";
 import { MessageCircle, Palette, CreditCard, Sparkles } from "lucide-react";
 
 const HowToOrder = () => {
