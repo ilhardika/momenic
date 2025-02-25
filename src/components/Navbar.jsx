@@ -50,7 +50,7 @@ function Navbar() {
             to="/video"
             className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
           >
-            Video
+            Video 3D
           </Link>
         </div>
 
@@ -89,7 +89,7 @@ function Navbar() {
               className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
-              Video
+              Video 3D
             </Link>
           </div>
         </div>
