@@ -93,7 +93,6 @@ const HowToOrder = () => {
 
         {/* Enhanced Promo Banner */}
         <div className="mt-12 bg-[#3F4D34] rounded-2xl p-6 sm:p-8 text-center relative overflow-hidden font-secondary">
-          <div className="absolute inset-0 bg-[url('/sparkles.png')] opacity-10 animate-pulse"></div>
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1 mb-4">
               <Sparkles className="h-4 w-4 text-yellow-300" />

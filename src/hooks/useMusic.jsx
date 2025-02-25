@@ -5,12 +5,8 @@ const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
-// List of CORS proxies to try in order
-const PROXY_URLS = [
-  "https://api.allorigins.win/raw?url=",
-  "https://corsproxy.io/?",
-  "https://cors-anywhere.herokuapp.com/",
-];
+// Using a single reliable CORS proxy
+const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=";
 
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
@@ -42,16 +38,15 @@ const useMusic = () => {
     [search]
   );
 
-  const fetchWithProxy = async (proxyIndex = 0) => {
-    if (proxyIndex >= PROXY_URLS.length) {
-      throw new Error("All proxies failed");
-    }
-
+  const fetchMusic = async () => {
     try {
-      const proxyUrl = PROXY_URLS[proxyIndex];
       const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
-      const response = await fetch(proxyUrl + encodedUrl, {
-        signal: AbortSignal.timeout(8000),
+      const response = await fetch(PROXY_URL + encodedUrl, {
+        signal: AbortSignal.timeout(15000), // Increased timeout
+        headers: {
+          Accept: "text/html",
+          "User-Agent": "Mozilla/5.0",
+        },
       });
 
       if (!response.ok) {
@@ -60,30 +55,28 @@ const useMusic = () => {
 
       return await response.text();
     } catch (error) {
-      // Try next proxy if available
-      return fetchWithProxy(proxyIndex + 1);
+      throw new Error(`Fetch failed: ${error.message}`);
     }
   };
 
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Check cache first
+        // Always try to use cached data first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
           setMusics(data);
           setLoading(false);
 
+          // If cache is fresh, don't fetch new data
           if (Date.now() - timestamp < CACHE_DURATION) {
             return;
           }
         }
 
         setLoading(true);
-
-        // Try fetching with different proxies
-        const html = await fetchWithProxy();
+        const html = await fetchMusic();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
@@ -126,12 +119,14 @@ const useMusic = () => {
 
           setMusics(extractedMusics);
           setError(null);
+        } else {
+          throw new Error("No music data found");
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Use cached data as fallback
+        // Try to use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
