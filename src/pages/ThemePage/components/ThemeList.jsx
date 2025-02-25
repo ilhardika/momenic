@@ -6,7 +6,7 @@ import Pagination from "../../../components/Pagination";
 
 const ThemeList = () => {
   const {
-    themes, // This is now paginatedThemes from the hook
+    themes,
     loading,
     error,
     currentPage,
@@ -23,6 +23,11 @@ const ThemeList = () => {
   const getThemeSlug = (url) => {
     const match = url.match(/themes\/([^/]+)/);
     return match ? match[1] : "";
+  };
+
+  // Handle search through onSearch prop
+  const handleSearch = (value) => {
+    setSearchQuery(value);
   };
 
   if (loading) {
@@ -56,9 +61,9 @@ const ThemeList = () => {
         <div className="mb-8 space-y-6">
           {/* Search Bar */}
           <Search
-            value={searchQuery}
-            onChange={setSearchQuery}
+            onSearch={handleSearch}
             placeholder="Cari tema..."
+            debounceTime={300}
           />
 
           {/* Category Pills */}
@@ -88,63 +93,77 @@ const ThemeList = () => {
           </div>
         </div>
 
-        {/* Theme Grid - Remove the slice here since data is already paginated */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {themes.map((theme) => (
-            <div
-              key={theme.id}
-              className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-md"
-            >
-              <div className="aspect-square overflow-hidden">
-                <img
-                  src={theme.featured_image}
-                  alt={theme.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-              </div>
+        {/* Empty State Message */}
+        {themes.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-[#3F4D34]/80 font-secondary text-lg mb-4">
+              {searchQuery
+                ? `Tidak ada tema yang cocok dengan pencarian "${searchQuery}"`
+                : "Tidak ada tema tersedia saat ini"}
+            </p>
+          </div>
+        )}
 
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        {/* Theme Grid */}
+        {themes.length > 0 && (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {themes.map((theme) => (
+                <div
+                  key={theme.id}
+                  className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-md"
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img
+                      src={theme.featured_image}
+                      alt={theme.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
 
-              {/* Content */}
-              <div className="absolute inset-0 flex flex-col items-center justify-end p-3 sm:p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <h3 className="font-secondary text-base sm:text-lg text-white mb-2 sm:mb-4 text-center">
-                  {theme.name}
-                </h3>
-                <div className="flex gap-1.5 sm:gap-2 w-full">
-                  <a
-                    href={`https://momenic.webinvit.id/preview/${getThemeSlug(
-                      theme.featured_image
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-secondary text-[#3F4D34] transition-colors hover:bg-[#3F4D34] hover:text-white"
-                  >
-                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>Preview</span>
-                  </a>
-                  <a
-                    href={`https://api.whatsapp.com/send?phone=6285179897917&text=Halo Minmo, saya ingin pesan undangan digital tema ${theme.name}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-[#128C7E] px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-secondary text-white transition-colors hover:bg-[#2d5c56]"
-                  >
-                    <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>Pesan</span>
-                  </a>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-end p-3 sm:p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <h3 className="font-secondary text-base sm:text-lg text-white mb-2 sm:mb-4 text-center">
+                      {theme.name}
+                    </h3>
+                    <div className="flex gap-1.5 sm:gap-2 w-full">
+                      <a
+                        href={`https://momenic.webinvit.id/preview/${getThemeSlug(
+                          theme.featured_image
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-secondary text-[#3F4D34] transition-colors hover:bg-[#3F4D34] hover:text-white"
+                      >
+                        <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Preview</span>
+                      </a>
+                      <a
+                        href={`https://api.whatsapp.com/send?phone=6285179897917&text=Halo Minmo, saya ingin pesan undangan digital tema ${theme.name}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-[#128C7E] px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-secondary text-white transition-colors hover:bg-[#2d5c56]"
+                      >
+                        <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Pesan</span>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

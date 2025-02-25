@@ -23,7 +23,7 @@ const useThemes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(0);
 
-  // Updated categories array without category 3 and with proper names
+  // Categories
   const categories = [
     { id: 0, name: "All Categories" },
     { id: 1, name: "Wedding" },
@@ -39,15 +39,15 @@ const useThemes = () => {
 
   // Filter themes based on search and category
   const filteredThemes = themes.filter((theme) => {
-    const matchesSearch = theme.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === 0 || theme.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
+    if (selectedCategory !== 0 && theme.category_id !== selectedCategory) {
+      return false;
+    }
+    if (!searchQuery) return true;
+
+    return theme.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  // Calculate total pages
+  // Calculate total pages from filtered results
   const totalPages = Math.ceil(filteredThemes.length / PER_PAGE);
 
   // Get paginated themes
@@ -76,8 +76,14 @@ const useThemes = () => {
         }
 
         setLoading(true);
+
+        // Add timeout to request
         const response = await axios.get("https://satumomen.com/api/themes", {
-          timeout: 5000, // Add timeout
+          timeout: 5000,
+          headers: {
+            Accept: "application/json",
+            "Cache-Control": "max-age=3600",
+          },
         });
 
         const themesData = response.data.data || [];
@@ -94,8 +100,8 @@ const useThemes = () => {
         setThemes(themesData);
         setError(null);
       } catch (err) {
-        console.error("API Error:", err);
-        setError("Failed to fetch themes");
+        console.error("Failed to fetch themes:", err);
+        setError("Gagal memuat tema");
 
         // Try to use stale cache if available
         const cached = localStorage.getItem(CACHE_KEY);
