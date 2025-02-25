@@ -46,6 +46,12 @@ const useVideos = () => {
 
               if (!title) return null;
 
+              // Helper function to add 100000 to price
+              const addToPrice = (priceStr) => {
+                const numericPrice = parseInt(priceStr.replace(/\D/g, ""));
+                return `Rp ${(numericPrice + 100000).toLocaleString("id-ID")}`;
+              };
+
               // Make sure URLs are absolute
               const imageUrl = img?.src?.startsWith("http")
                 ? img.src
@@ -60,8 +66,10 @@ const useVideos = () => {
                 imageUrl,
                 category: category || "Unknown",
                 type: selectedType,
-                price: price || "Rp 200.000",
-                originalPrice: originalPrice || "Rp 250.000",
+                price: price ? addToPrice(price) : "Rp 300.000",
+                originalPrice: originalPrice
+                  ? addToPrice(originalPrice)
+                  : "Rp 350.000",
                 previewUrl: `${BASE_URL}/preview/${videoId}`,
                 orderUrl: `https://api.whatsapp.com/send?phone=6285179897917&text=Halo Minmo, saya ingin pesan video ${
                   selectedType === "invitation" ? "undangan" : "ucapan"
