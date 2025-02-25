@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
+const BASE_URL = "https://momenic.webinvit.id";
 
 const usePortfolio = () => {
   const [portfolios, setPortfolios] = useState([]);
@@ -10,26 +11,34 @@ const usePortfolio = () => {
     const fetchPortfolios = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/portofolio", {
+
+        const response = await fetch(`${BASE_URL}/portofolio`, {
+          mode: "no-cors",
+          credentials: "omit",
           headers: {
-            Accept:
-              "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            Accept: "text/html",
           },
         });
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(response.data, "text/html");
+        // Since no-cors gives an opaque response, we'll use a proxy URL for assets
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        const proxyResponse = await fetch(
+          proxyUrl + encodeURIComponent(`${BASE_URL}/portofolio`)
+        );
+        const html = await proxyResponse.text();
 
-        // Find all portfolio cards
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        // Find all portfolio items
         const portfolioCards = doc.querySelectorAll(
           ".col-6.col-md-4.col-lg-3.mb-4"
         );
-        console.log("Found portfolio cards:", portfolioCards.length);
 
         const extractedPortfolios = Array.from(portfolioCards)
           .map((card, index) => {
             try {
-              const productCard = card.querySelector("a.product-card");
+              const productCard = card.querySelector("a");
               const img = card.querySelector("img");
               const category = card
                 .querySelector(".small")
@@ -38,12 +47,20 @@ const usePortfolio = () => {
 
               if (!title || !img?.src) return null;
 
+              // Make sure URLs are absolute
+              const imgUrl = img.src.startsWith("http")
+                ? img.src
+                : `${BASE_URL}${img.src}`;
+              const linkUrl = productCard?.href?.startsWith("http")
+                ? productCard.href
+                : `${BASE_URL}${productCard?.href || ""}`;
+
               return {
                 id: index + 1,
                 title,
                 category: category || "Wedding",
-                imageUrl: img.src,
-                link: productCard?.href || "#",
+                imageUrl: imgUrl,
+                link: linkUrl,
               };
             } catch (cardError) {
               console.error(`Error processing card ${index}:`, cardError);
