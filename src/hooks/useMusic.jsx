@@ -6,7 +6,6 @@ const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
 const useMusic = () => {
-  // Initialize state with cached data if available
   const [musics, setMusics] = useState(() => {
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
@@ -23,7 +22,6 @@ const useMusic = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  // Memoize the filter function
   const getFilteredMusics = useCallback(
     (musicList) => {
       if (!search) return musicList;
@@ -44,47 +42,36 @@ const useMusic = () => {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
-          // Use cached data immediately
           setMusics(data);
           setLoading(false);
 
-          // If cache is fresh enough, don't fetch
           if (Date.now() - timestamp < CACHE_DURATION) {
             return;
           }
         }
 
-        // Increase timeout and add retry logic
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased to 10 seconds
+        setLoading(true);
 
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          {
-            signal: controller.signal,
-            headers: {
-              Accept: "text/html",
-            },
-          }
-        );
+        // Direct fetch without proxy
+        const response = await fetch(`${BASE_URL}/music`, {
+          signal: AbortSignal.timeout(5000),
+          mode: "cors",
+          headers: {
+            Accept: "text/html",
+          },
+        });
 
-        clearTimeout(timeoutId);
-
-        if (!proxyResponse.ok) {
-          throw new Error(`HTTP error! status: ${proxyResponse.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const html = await proxyResponse.text();
+        const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
-        const fragment = doc.createDocumentFragment();
-        doc
-          .querySelectorAll(".col-md-6.col-lg-4.mb-4")
-          .forEach((card) => fragment.appendChild(card));
+        const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
 
-        const extractedMusics = Array.from(fragment.children)
+        const extractedMusics = Array.from(musicCards)
           .map((card, index) => {
             try {
               const button = card.querySelector("button[data-music]");
@@ -94,16 +81,16 @@ const useMusic = () => {
                 .querySelector(".text-gray")
                 ?.textContent?.trim();
 
-              return title && musicUrl
-                ? {
-                    id: index + 1,
-                    title,
-                    category: category || "Wedding",
-                    musicUrl: musicUrl.startsWith("http")
-                      ? musicUrl
-                      : `${BASE_URL}${musicUrl}`,
-                  }
-                : null;
+              if (!title || !musicUrl) return null;
+
+              return {
+                id: index + 1,
+                title,
+                category: category || "Wedding",
+                musicUrl: musicUrl.startsWith("http")
+                  ? musicUrl
+                  : `${BASE_URL}${musicUrl}`,
+              };
             } catch (cardError) {
               console.error(`Error processing card ${index}:`, cardError);
               return null;
@@ -125,27 +112,24 @@ const useMusic = () => {
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
+        setError("Gagal memuat musik");
 
-        if (err.name === "AbortError") {
-          setError("Koneksi timeout. Silakan coba lagi.");
-        } else {
-          setError("Gagal memuat musik. " + err.message);
-        }
-
-        // Always use cached data as fallback if available
+        // Use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
           setMusics(data);
-          setError((prev) => prev + " (menggunakan data cached)");
+          setError((prev) => `${prev} (menggunakan data cached)`);
         }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMusics();
-  }, []); // Only run on mount
+    if (!musics.length) {
+      fetchMusics();
+    }
+  }, []);
 
   // Apply memoized filter and pagination
   const filteredMusics = getFilteredMusics(musics);
@@ -155,7 +139,6 @@ const useMusic = () => {
     page * PER_PAGE
   );
 
-  // Reset page when search changes
   useEffect(() => {
     setPage(1);
   }, [search]);
