@@ -5,6 +5,13 @@ const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
+// List of CORS proxies to try in order
+const PROXY_URLS = [
+  "https://api.allorigins.win/raw?url=",
+  "https://corsproxy.io/?",
+  "https://cors-anywhere.herokuapp.com/",
+];
+
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
     const cached = localStorage.getItem(CACHE_KEY);
@@ -35,6 +42,29 @@ const useMusic = () => {
     [search]
   );
 
+  const fetchWithProxy = async (proxyIndex = 0) => {
+    if (proxyIndex >= PROXY_URLS.length) {
+      throw new Error("All proxies failed");
+    }
+
+    try {
+      const proxyUrl = PROXY_URLS[proxyIndex];
+      const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
+      const response = await fetch(proxyUrl + encodedUrl, {
+        signal: AbortSignal.timeout(8000),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.text();
+    } catch (error) {
+      // Try next proxy if available
+      return fetchWithProxy(proxyIndex + 1);
+    }
+  };
+
   useEffect(() => {
     const fetchMusics = async () => {
       try {
@@ -52,25 +82,12 @@ const useMusic = () => {
 
         setLoading(true);
 
-        // Direct fetch without proxy
-        const response = await fetch(`${BASE_URL}/music`, {
-          signal: AbortSignal.timeout(5000),
-          mode: "cors",
-          headers: {
-            Accept: "text/html",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const html = await response.text();
+        // Try fetching with different proxies
+        const html = await fetchWithProxy();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
         const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
-
         const extractedMusics = Array.from(musicCards)
           .map((card, index) => {
             try {
@@ -119,7 +136,7 @@ const useMusic = () => {
         if (cached) {
           const { data } = JSON.parse(cached);
           setMusics(data);
-          setError((prev) => `${prev} (menggunakan data cached)`);
+          setError("Menggunakan data cached karena gagal memuat data terbaru");
         }
       } finally {
         setLoading(false);
