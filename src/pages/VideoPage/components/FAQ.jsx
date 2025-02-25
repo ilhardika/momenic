@@ -69,7 +69,7 @@ function FAQItem({ question, answer }) {
 
 function FAQ() {
   return (
-    <section className="px-4 py-20 sm:py-28 bg-[#3F4D34]/5">
+    <section className="px-4 py-20 sm:py-28 bg-[#3F4D34]/5 mt-16">
       <div className="container mx-auto max-w-4xl">
         {/* Section Header */}
         <div className="text-center mb-12">

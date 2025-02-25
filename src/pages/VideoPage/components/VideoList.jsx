@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Eye, MessageCircle, Search } from "lucide-react";
 import useVideos from "../../../hooks/useVideos";
+import VideoModal from "./VideoModal";
 
 const VideoList = () => {
   const { videos, loading, error, selectedType, setSelectedType } = useVideos();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
   const videoTypes = [
     { id: "invitation", name: "Undangan" },
@@ -38,6 +40,10 @@ const VideoList = () => {
 
   if (error) return null;
   if (!videos || videos.length === 0) return null;
+
+  const handlePreviewClick = (video) => {
+    setSelectedVideo(video);
+  };
 
   return (
     <div className="px-4">
@@ -115,7 +121,7 @@ const VideoList = () => {
                 </div>
                 <div className="flex gap-1.5 sm:gap-2 w-full">
                   <button
-                    onClick={() => window.open(video.previewUrl, "_blank")}
+                    onClick={() => handlePreviewClick(video)}
                     className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-secondary text-[#3F4D34] transition-colors hover:bg-[#3F4D34] hover:text-white"
                   >
                     <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -135,6 +141,13 @@ const VideoList = () => {
             </article>
           ))}
         </div>
+
+        {/* Video Modal */}
+        <VideoModal
+          isOpen={!!selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          video={selectedVideo}
+        />
       </div>
     </div>
   );

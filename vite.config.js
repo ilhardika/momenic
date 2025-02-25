@@ -20,30 +20,6 @@ export default defineConfig({
           Pragma: "no-cache",
         },
       },
-      "/portofolio": {
-        target: "https://momenic.webinvit.id",
-        changeOrigin: true,
-        cors: true,
-        secure: false,
-        headers: {
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      },
-      "/music": {
-        target: "https://momenic.webinvit.id",
-        changeOrigin: true,
-        cors: true,
-        secure: false,
-        headers: {
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      },
     },
   },
 });

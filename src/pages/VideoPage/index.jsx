@@ -23,7 +23,7 @@ function VideoPage() {
       <VideoList />
 
       {/* FAQ Component */}
-      <FAQ />
+      <FAQ/>
     </div>
   );
 }
