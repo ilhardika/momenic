@@ -9,7 +9,7 @@ const useThemes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(0); // 0 means all categories
-  const themesPerPage = 8;
+  const themesPerPage = 12; // Changed from 8 to 12
 
   // Updated categories array without category 3 and with proper names
   const categories = [

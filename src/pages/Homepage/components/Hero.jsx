@@ -3,7 +3,7 @@ import { MessageCircle, Sparkles } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-32 px-4 md:py-1">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-32 px-4 md:py-1 mt-16">
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[#E4E9CB] opacity-90" />
