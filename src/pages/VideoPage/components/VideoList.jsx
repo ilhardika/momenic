@@ -1,23 +1,44 @@
 import React, { useState } from "react";
-import { Eye, MessageCircle, Search } from "lucide-react";
+import { Eye, MessageCircle } from "lucide-react";
 import useVideos from "../../../hooks/useVideos";
 import VideoModal from "./VideoModal";
+import Search from "../../../components/Search";
+import Pagination from "../../../components/Pagination";
 
 const VideoList = () => {
   const { videos, loading, error, selectedType, setSelectedType } = useVideos();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PER_PAGE = 12;
 
   const videoTypes = [
     { id: "invitation", name: "Undangan" },
     { id: "greeting", name: "Ucapan" },
   ];
 
+  // Filter videos by search query
   const filteredVideos = videos?.filter(
     (video) =>
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       video.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Calculate pagination
+  const totalPages = Math.ceil((filteredVideos?.length || 0) / PER_PAGE);
+  const paginatedVideos = filteredVideos?.slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE
+  );
+
+  // Reset page when search changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedType]);
+
+  const handlePreviewClick = (video) => {
+    setSelectedVideo(video);
+  };
 
   if (loading) {
     return (
@@ -41,29 +62,18 @@ const VideoList = () => {
   if (error) return null;
   if (!videos || videos.length === 0) return null;
 
-  const handlePreviewClick = (video) => {
-    setSelectedVideo(video);
-  };
-
   return (
     <div className="px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Search Bar */}
         <div className="mb-8">
-          <div className="relative max-w-xl mx-auto">
-            <input
-              type="text"
-              placeholder={`Cari video ${
-                selectedType === "invitation" ? "undangan" : "ucapan"
-              }...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-5 py-4 pr-12 rounded-full border border-[#3F4D34]/20 
-                       focus:outline-none focus:border-[#3F4D34]/40 
-                       font-secondary text-[#3F4D34]"
-            />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3F4D34]/40" />
-          </div>
+          <Search
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder={`Cari video ${
+              selectedType === "invitation" ? "undangan" : "ucapan"
+            }...`}
+          />
         </div>
 
         {/* Type Selection Pills */}
@@ -88,7 +98,7 @@ const VideoList = () => {
 
         {/* Video Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {filteredVideos.map((video) => (
+          {paginatedVideos.map((video) => (
             <article
               key={video.id}
               className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-md h-full"
@@ -141,6 +151,15 @@ const VideoList = () => {
             </article>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
 
         {/* Video Modal */}
         <VideoModal
