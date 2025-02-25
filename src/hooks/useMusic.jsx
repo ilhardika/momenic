@@ -44,23 +44,36 @@ const useMusic = () => {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
+          // Use cached data immediately
+          setMusics(data);
+          setLoading(false);
+
+          // If cache is fresh enough, don't fetch
           if (Date.now() - timestamp < CACHE_DURATION) {
-            setMusics(data);
-            setLoading(false);
             return;
           }
         }
 
-        setLoading(true);
+        // Increase timeout and add retry logic
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased to 10 seconds
 
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
           proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
           {
-            signal: AbortSignal.timeout(5000),
-            // Remove problematic headers
+            signal: controller.signal,
+            headers: {
+              Accept: "text/html",
+            },
           }
         );
+
+        clearTimeout(timeoutId);
+
+        if (!proxyResponse.ok) {
+          throw new Error(`HTTP error! status: ${proxyResponse.status}`);
+        }
 
         const html = await proxyResponse.text();
         const parser = new DOMParser();
@@ -112,24 +125,27 @@ const useMusic = () => {
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
-        setError("Gagal memuat musik");
 
-        // Try to use stale cache if available
+        if (err.name === "AbortError") {
+          setError("Koneksi timeout. Silakan coba lagi.");
+        } else {
+          setError("Gagal memuat musik. " + err.message);
+        }
+
+        // Always use cached data as fallback if available
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
           setMusics(data);
-          setError("Menggunakan data cached karena gagal memuat data terbaru");
+          setError((prev) => prev + " (menggunakan data cached)");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    if (!musics.length) {
-      fetchMusics();
-    }
-  }, []);
+    fetchMusics();
+  }, []); // Only run on mount
 
   // Apply memoized filter and pagination
   const filteredMusics = getFilteredMusics(musics);
