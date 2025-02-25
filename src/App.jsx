@@ -3,6 +3,7 @@ import HomePage from "./pages/Homepage";
 import ThemePage from "./pages/ThemePage";
 import VideoPage from "./pages/VideoPage";
 import Navbar from "./components/Navbar";
+import Portfolio from "./pages/Portfolio";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/tema" element={<ThemePage />} />
           <Route path="/video" element={<VideoPage />} />
+          <Route path="/portfolio" element={<Portfolio />} />
         </Routes>
       </div>
     </Router>
