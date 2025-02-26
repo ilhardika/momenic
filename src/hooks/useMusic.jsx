@@ -5,9 +5,6 @@ const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
-// Change the PROXY_URL to match usePortfolio's proxy
-const PROXY_URL = "https://api.allorigins.win/raw?url=";
-
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
     const cached = localStorage.getItem(CACHE_KEY);
@@ -45,23 +42,27 @@ const useMusic = () => {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
+          setMusics(data);
+          setLoading(false);
+
           if (Date.now() - timestamp < CACHE_DURATION) {
-            setMusics(data);
-            setLoading(false);
             return;
           }
         }
 
         setLoading(true);
 
-        // Match exactly how usePortfolio fetches data
+        // Using the same proxy as usePortfolio
         const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          { signal: AbortSignal.timeout(5000) }
+        const response = await fetch(
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
         );
-        const html = await proxyResponse.text();
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
@@ -104,8 +105,6 @@ const useMusic = () => {
 
           setMusics(extractedMusics);
           setError(null);
-        } else {
-          throw new Error("No music data found");
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
