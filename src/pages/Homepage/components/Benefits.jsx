@@ -36,13 +36,7 @@ const Benefits = () => {
   ];
 
   return (
-    <section className="relative py-20 sm:py-28 px-4 overflow-hidden">
-      {/* Background - Similar to Hero */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[#E4E9CB] opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent" />
-      </div>
-
+    <section className="relative py-20 sm:py-28 px-4 overflow-hidden bg-white">
       {/* Content container with relative position to appear above background */}
       <div className="container mx-auto max-w-6xl relative z-10">
         {/* Section Header */}

@@ -31,7 +31,7 @@ const HowToOrder = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-28 px-4 bg-gradient-to-b from-[#3F4D34]/5 to-white">
+    <section className="py-20 sm:py-28 px-4 bg-gradient-to-b from-[#E4E9CB]/30 to-white">
       <div className="container mx-auto max-w-6xl">
         {/* Section Title */}
         <div className="text-center mb-12 sm:mb-16">
