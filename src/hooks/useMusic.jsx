@@ -5,8 +5,8 @@ const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
-// Using a single reliable CORS proxy
-const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=";
+// Change the PROXY_URL to match usePortfolio's proxy
+const PROXY_URL = "https://api.allorigins.win/raw?url=";
 
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
@@ -42,11 +42,8 @@ const useMusic = () => {
     try {
       const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
       const response = await fetch(PROXY_URL + encodedUrl, {
-        signal: AbortSignal.timeout(15000), // Increased timeout
-        headers: {
-          Accept: "text/html",
-          "User-Agent": "Mozilla/5.0",
-        },
+        signal: AbortSignal.timeout(5000), // Match usePortfolio's timeout
+        // Remove problematic headers that might cause CORS issues
       });
 
       if (!response.ok) {
