@@ -38,42 +38,30 @@ const useMusic = () => {
     [search]
   );
 
-  const fetchMusic = async () => {
-    try {
-      const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
-      const response = await fetch(PROXY_URL + encodedUrl, {
-        signal: AbortSignal.timeout(5000), // Match usePortfolio's timeout
-        // Remove problematic headers that might cause CORS issues
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.text();
-    } catch (error) {
-      throw new Error(`Fetch failed: ${error.message}`);
-    }
-  };
-
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Always try to use cached data first
+        // Check cache first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
-          setMusics(data);
-          setLoading(false);
-
-          // If cache is fresh, don't fetch new data
           if (Date.now() - timestamp < CACHE_DURATION) {
+            setMusics(data);
+            setLoading(false);
             return;
           }
         }
 
         setLoading(true);
-        const html = await fetchMusic();
+
+        // Match exactly how usePortfolio fetches data
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        const proxyResponse = await fetch(
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
+          { signal: AbortSignal.timeout(5000) }
+        );
+        const html = await proxyResponse.text();
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
@@ -123,7 +111,7 @@ const useMusic = () => {
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Try to use cached data as fallback
+        // Use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
