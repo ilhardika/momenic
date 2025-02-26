@@ -9,9 +9,9 @@ function Home() {
   return (
     <div className="font-primary">
       <Hero />
+      <Theme />
       <Features />
       <Benefits />
-      <Theme />
       <HowToOrder />
     </div>
   );

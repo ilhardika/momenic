@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const BASE_URL = "https://momenic.webinvit.id";
 const CACHE_KEY = "music-data";
@@ -21,6 +21,7 @@ const useMusic = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const abortControllerRef = useRef(null);
 
   const getFilteredMusics = useCallback(
     (musicList) => {
@@ -38,7 +39,7 @@ const useMusic = () => {
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Check cache first
+        // Use cached data immediately if available
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
@@ -50,12 +51,26 @@ const useMusic = () => {
           }
         }
 
+        // Cancel previous fetch if exists
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+
         setLoading(true);
 
-        // Using the same proxy as usePortfolio
+        // Create new abort controller
+        abortControllerRef.current = new AbortController();
+
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const response = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
+          {
+            signal: abortControllerRef.current.signal,
+            headers: {
+              Accept: "text/html",
+              "Cache-Control": "no-cache",
+            },
+          }
         );
 
         if (!response.ok) {
@@ -63,10 +78,17 @@ const useMusic = () => {
         }
 
         const html = await response.text();
+
+        // Use createRange for faster parsing
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
+        const range = document.createRange();
+        range.selectNode(doc.body);
 
-        const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
+        // Batch DOM operations
+        const fragment = range.createContextualFragment(html);
+        const musicCards = fragment.querySelectorAll(".col-md-6.col-lg-4.mb-4");
+
         const extractedMusics = Array.from(musicCards)
           .map((card, index) => {
             try {
@@ -88,7 +110,6 @@ const useMusic = () => {
                   : `${BASE_URL}${musicUrl}`,
               };
             } catch (cardError) {
-              console.error(`Error processing card ${index}:`, cardError);
               return null;
             }
           })
@@ -107,10 +128,12 @@ const useMusic = () => {
           setError(null);
         }
       } catch (err) {
+        if (err.name === "AbortError") {
+          return; // Ignore abort errors
+        }
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
@@ -122,9 +145,14 @@ const useMusic = () => {
       }
     };
 
-    if (!musics.length) {
-      fetchMusics();
-    }
+    fetchMusics();
+
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   // Apply memoized filter and pagination
