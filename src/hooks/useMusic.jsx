@@ -61,12 +61,22 @@ const useMusic = () => {
         setLoading(true);
 
         const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const response = await fetch(
+        const proxyResponse = await fetch(
           proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          { signal: AbortSignal.timeout(5000) } // 5 second timeout
+          {
+            signal: AbortSignal.timeout(5000),
+            headers: {
+              Accept:
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            },
+          }
         );
 
-        const html = await response.text();
+        if (!proxyResponse.ok) {
+          throw new Error(`HTTP error! status: ${proxyResponse.status}`);
+        }
+
+        const html = await proxyResponse.text();
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
@@ -100,7 +110,6 @@ const useMusic = () => {
           .filter(Boolean);
 
         if (extractedMusics.length > 0) {
-          // Cache the results
           localStorage.setItem(
             CACHE_KEY,
             JSON.stringify({
@@ -111,12 +120,13 @@ const useMusic = () => {
 
           setMusics(extractedMusics);
           setError(null);
+        } else {
+          throw new Error("No music data found");
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Try to use stale cache if available
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
