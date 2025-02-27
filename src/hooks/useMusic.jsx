@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const BASE_URL = "https://momenic.webinvit.id";
 const CACHE_KEY = "music-data";
@@ -21,65 +21,56 @@ const useMusic = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const abortControllerRef = useRef(null);
 
-  const getFilteredMusics = useCallback(
-    (musicList) => {
-      if (!search) return musicList;
-      const searchLower = search.toLowerCase();
-      return musicList.filter(
-        (music) =>
-          music.title.toLowerCase().includes(searchLower) ||
-          music.category.toLowerCase().includes(searchLower)
-      );
-    },
-    [search]
+  // Filter musics based on search query
+  const filteredMusics = musics.filter((music) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+    return (
+      music.title.toLowerCase().includes(searchLower) ||
+      music.category.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
+  const paginatedMusics = filteredMusics.slice(
+    (page - 1) * PER_PAGE,
+    page * PER_PAGE
   );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Use cached data immediately if available
+        // Check cache first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
-          setMusics(data);
-          setLoading(false);
-
           if (Date.now() - timestamp < CACHE_DURATION) {
+            setMusics(data);
+            setLoading(false);
             return;
           }
         }
 
         setLoading(true);
 
-        // Use a different CORS proxy
-        const proxyUrl = "https://corsproxy.io/?";
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
         const response = await fetch(
           proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          {
-            signal: AbortSignal.timeout(10000), // 10 second timeout
-            headers: {
-              Accept: "*/*",
-            },
-          }
+          { signal: AbortSignal.timeout(5000) } // 5 second timeout
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
 
         const html = await response.text();
 
-        // Use createRange for faster parsing
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
-        const range = document.createRange();
-        range.selectNode(doc.body);
-
-        // Batch DOM operations
-        const fragment = range.createContextualFragment(html);
-        const musicCards = fragment.querySelectorAll(".col-md-6.col-lg-4.mb-4");
+        const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
 
         const extractedMusics = Array.from(musicCards)
           .map((card, index) => {
@@ -102,12 +93,14 @@ const useMusic = () => {
                   : `${BASE_URL}${musicUrl}`,
               };
             } catch (cardError) {
+              console.error(`Error processing card ${index}:`, cardError);
               return null;
             }
           })
           .filter(Boolean);
 
         if (extractedMusics.length > 0) {
+          // Cache the results
           localStorage.setItem(
             CACHE_KEY,
             JSON.stringify({
@@ -120,14 +113,10 @@ const useMusic = () => {
           setError(null);
         }
       } catch (err) {
-        if (err.name === "AbortError" || err.name === "TimeoutError") {
-          console.log("Request was aborted or timed out");
-          return;
-        }
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Use cached data as fallback
+        // Try to use stale cache if available
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
@@ -139,27 +128,10 @@ const useMusic = () => {
       }
     };
 
-    fetchMusics();
-
-    // Cleanup function
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
+    if (!musics.length) {
+      fetchMusics();
+    }
   }, []);
-
-  // Apply memoized filter and pagination
-  const filteredMusics = getFilteredMusics(musics);
-  const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
-  const paginatedMusics = filteredMusics.slice(
-    (page - 1) * PER_PAGE,
-    page * PER_PAGE
-  );
-
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
 
   return {
     musics: paginatedMusics,
