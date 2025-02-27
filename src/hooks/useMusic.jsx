@@ -51,24 +51,16 @@ const useMusic = () => {
           }
         }
 
-        // Cancel previous fetch if exists
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-
         setLoading(true);
 
-        // Create new abort controller
-        abortControllerRef.current = new AbortController();
-
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        // Use a different CORS proxy
+        const proxyUrl = "https://corsproxy.io/?";
         const response = await fetch(
           proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
           {
-            signal: abortControllerRef.current.signal,
+            signal: AbortSignal.timeout(10000), // 10 second timeout
             headers: {
-              Accept: "text/html",
-              "Cache-Control": "no-cache",
+              Accept: "*/*",
             },
           }
         );
@@ -128,12 +120,14 @@ const useMusic = () => {
           setError(null);
         }
       } catch (err) {
-        if (err.name === "AbortError") {
-          return; // Ignore abort errors
+        if (err.name === "AbortError" || err.name === "TimeoutError") {
+          console.log("Request was aborted or timed out");
+          return;
         }
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
+        // Use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
