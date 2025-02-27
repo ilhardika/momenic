@@ -38,22 +38,26 @@ const useMusic = () => {
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Always try to use cached data first
+        // Check cache first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
-          setMusics(data);
-          setLoading(false);
-
-          // If cache is fresh, don't fetch new data
           if (Date.now() - timestamp < CACHE_DURATION) {
+            setMusics(data);
+            setLoading(false);
             return;
           }
         }
 
         setLoading(true);
-        const response = await fetch(`${BASE_URL}/music`);
-        const html = await response.text();
+
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        const proxyResponse = await fetch(
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
+          { signal: AbortSignal.timeout(5000) }
+        );
+        const html = await proxyResponse.text();
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
