@@ -5,9 +5,6 @@ const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
 
-// Change the PROXY_URL to match usePortfolio's proxy
-const PROXY_URL = "https://api.allorigins.win/raw?url=";
-
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
     const cached = localStorage.getItem(CACHE_KEY);
@@ -38,24 +35,6 @@ const useMusic = () => {
     [search]
   );
 
-  const fetchMusic = async () => {
-    try {
-      const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
-      const response = await fetch(PROXY_URL + encodedUrl, {
-        signal: AbortSignal.timeout(5000), // Match usePortfolio's timeout
-        // Remove problematic headers that might cause CORS issues
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.text();
-    } catch (error) {
-      throw new Error(`Fetch failed: ${error.message}`);
-    }
-  };
-
   useEffect(() => {
     const fetchMusics = async () => {
       try {
@@ -73,7 +52,8 @@ const useMusic = () => {
         }
 
         setLoading(true);
-        const html = await fetchMusic();
+        const response = await fetch(`${BASE_URL}/music`);
+        const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
@@ -116,8 +96,6 @@ const useMusic = () => {
 
           setMusics(extractedMusics);
           setError(null);
-        } else {
-          throw new Error("No music data found");
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
@@ -135,9 +113,7 @@ const useMusic = () => {
       }
     };
 
-    if (!musics.length) {
-      fetchMusics();
-    }
+    fetchMusics();
   }, []);
 
   // Apply memoized filter and pagination
