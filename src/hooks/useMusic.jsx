@@ -53,7 +53,8 @@ const useMusic = () => {
 
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
+          { signal: AbortSignal.timeout(5000) }
         );
         const html = await proxyResponse.text();
 
@@ -115,7 +116,9 @@ const useMusic = () => {
       }
     };
 
-    fetchMusics();
+    if (!musics.length) {
+      fetchMusics();
+    }
   }, []);
 
   const filteredMusics = getFilteredMusics(musics);
