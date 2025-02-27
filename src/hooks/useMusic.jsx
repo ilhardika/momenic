@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const BASE_URL = "https://momenic.webinvit.id";
 const CACHE_KEY = "music-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
+
+// Using a single reliable CORS proxy
+const PROXY_URL = "https://api.codetabs.com/v1/proxy?quest=";
 
 const useMusic = () => {
   const [musics, setMusics] = useState(() => {
@@ -21,79 +24,63 @@ const useMusic = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const abortControllerRef = useRef(null);
 
-  // Filter and pagination logic remains the same
-  const filteredMusics = musics.filter((music) => {
-    if (!search) return true;
-    const searchLower = search.toLowerCase();
-    return (
-      music.title.toLowerCase().includes(searchLower) ||
-      music.category.toLowerCase().includes(searchLower)
-    );
-  });
-
-  const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
-  const paginatedMusics = filteredMusics.slice(
-    (page - 1) * PER_PAGE,
-    page * PER_PAGE
+  const getFilteredMusics = useCallback(
+    (musicList) => {
+      if (!search) return musicList;
+      const searchLower = search.toLowerCase();
+      return musicList.filter(
+        (music) =>
+          music.title.toLowerCase().includes(searchLower) ||
+          music.category.toLowerCase().includes(searchLower)
+      );
+    },
+    [search]
   );
 
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
+  const fetchMusic = async () => {
+    try {
+      const encodedUrl = encodeURIComponent(`${BASE_URL}/music`);
+      const response = await fetch(PROXY_URL + encodedUrl, {
+        signal: AbortSignal.timeout(15000), // Increased timeout
+        headers: {
+          Accept: "text/html",
+          "User-Agent": "Mozilla/5.0",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.text();
+    } catch (error) {
+      throw new Error(`Fetch failed: ${error.message}`);
+    }
+  };
 
   useEffect(() => {
     const fetchMusics = async () => {
       try {
+        // Always try to use cached data first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
+          setMusics(data);
+          setLoading(false);
+
+          // If cache is fresh, don't fetch new data
           if (Date.now() - timestamp < CACHE_DURATION) {
-            setMusics(data);
-            setLoading(false);
             return;
           }
         }
 
         setLoading(true);
-
-        // Cancel previous fetch if exists
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-
-        // Create new abort controller
-        abortControllerRef.current = new AbortController();
-
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          {
-            signal: abortControllerRef.current.signal,
-            headers: {
-              Accept: "text/html",
-              "Cache-Control": "no-cache",
-            },
-          }
-        );
-
-        if (!proxyResponse.ok) {
-          throw new Error(`HTTP error! status: ${proxyResponse.status}`);
-        }
-
-        const html = await proxyResponse.text();
+        const html = await fetchMusic();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
-        // Use createRange for faster parsing
-        const range = document.createRange();
-        range.selectNode(doc.body);
-
-        // Batch DOM operations
-        const fragment = range.createContextualFragment(html);
-        const musicCards = fragment.querySelectorAll(".col-md-6.col-lg-4.mb-4");
-
+        const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
         const extractedMusics = Array.from(musicCards)
           .map((card, index) => {
             try {
@@ -136,12 +123,10 @@ const useMusic = () => {
           throw new Error("No music data found");
         }
       } catch (err) {
-        if (err.name === "AbortError") {
-          return; // Ignore abort errors
-        }
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
+        // Try to use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
@@ -153,15 +138,22 @@ const useMusic = () => {
       }
     };
 
-    fetchMusics();
-
-    // Cleanup function
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
+    if (!musics.length) {
+      fetchMusics();
+    }
   }, []);
+
+  // Apply memoized filter and pagination
+  const filteredMusics = getFilteredMusics(musics);
+  const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
+  const paginatedMusics = filteredMusics.slice(
+    (page - 1) * PER_PAGE,
+    page * PER_PAGE
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   return {
     musics: paginatedMusics,
