@@ -38,13 +38,13 @@ const useMusic = () => {
   useEffect(() => {
     const fetchMusics = async () => {
       try {
-        // Check cache first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
+          setMusics(data);
+          setLoading(false);
+
           if (Date.now() - timestamp < CACHE_DURATION) {
-            setMusics(data);
-            setLoading(false);
             return;
           }
         }
@@ -53,8 +53,7 @@ const useMusic = () => {
 
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          { signal: AbortSignal.timeout(5000) }
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
         );
         const html = await proxyResponse.text();
 
@@ -105,7 +104,6 @@ const useMusic = () => {
         console.error("Failed to fetch music:", err);
         setError("Gagal memuat musik");
 
-        // Try to use cached data as fallback
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data } = JSON.parse(cached);
@@ -120,7 +118,6 @@ const useMusic = () => {
     fetchMusics();
   }, []);
 
-  // Apply memoized filter and pagination
   const filteredMusics = getFilteredMusics(musics);
   const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
   const paginatedMusics = filteredMusics.slice(
