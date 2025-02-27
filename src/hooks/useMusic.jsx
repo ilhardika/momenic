@@ -22,19 +22,6 @@ const useMusic = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const getFilteredMusics = useCallback(
-    (musicList) => {
-      if (!search) return musicList;
-      const searchLower = search.toLowerCase();
-      return musicList.filter(
-        (music) =>
-          music.title.toLowerCase().includes(searchLower) ||
-          music.category.toLowerCase().includes(searchLower)
-      );
-    },
-    [search]
-  );
-
   useEffect(() => {
     const fetchMusics = async () => {
       try {
@@ -43,21 +30,17 @@ const useMusic = () => {
           const { data, timestamp } = JSON.parse(cached);
           setMusics(data);
           setLoading(false);
-
-          if (Date.now() - timestamp < CACHE_DURATION) {
-            return;
-          }
+          if (Date.now() - timestamp < CACHE_DURATION) return;
         }
 
         setLoading(true);
 
         const proxyUrl = "https://api.allorigins.win/raw?url=";
         const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`),
-          { signal: AbortSignal.timeout(5000) }
+          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
         );
-        const html = await proxyResponse.text();
 
+        const html = await proxyResponse.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
@@ -121,7 +104,19 @@ const useMusic = () => {
     }
   }, []);
 
-  const filteredMusics = getFilteredMusics(musics);
+  const filteredMusics = useCallback(
+    (musicList) => {
+      if (!search) return musicList;
+      const searchLower = search.toLowerCase();
+      return musicList.filter(
+        (music) =>
+          music.title.toLowerCase().includes(searchLower) ||
+          music.category.toLowerCase().includes(searchLower)
+      );
+    },
+    [search]
+  )(musics);
+
   const totalPages = Math.ceil(filteredMusics.length / PER_PAGE);
   const paginatedMusics = filteredMusics.slice(
     (page - 1) * PER_PAGE,

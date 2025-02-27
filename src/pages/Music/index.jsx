@@ -16,6 +16,7 @@ function Music() {
     setSearch,
   } = useMusic();
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [countdown, setCountdown] = useState(25);
 
   // Add handleSearch function
   const handleSearch = (value) => {
@@ -31,6 +32,17 @@ function Music() {
       }
     };
   }, []);
+
+  // Add countdown effect
+  useEffect(() => {
+    let timer;
+    if (loading && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [loading, countdown]);
 
   const handlePlay = (musicUrl, id) => {
     if (currentlyPlaying?.audio) {
@@ -59,6 +71,17 @@ function Music() {
     return (
       <div className="py-20 sm:py-28 my-16">
         <div className="container mx-auto max-w-5xl px-4">
+          <div className="text-center mb-8">
+            <p className="text-[#3F4D34] font-secondary text-lg mb-2">
+              Mohon maaf atas ketidaknyamanannya
+            </p>
+            <p className="text-[#3F4D34]/80 font-secondary mb-4">
+              Sistem sedang mempersiapkan daftar musik untuk Anda
+            </p>
+            <p className="text-[#3F4D34]/60 font-secondary text-sm">
+              Estimasi waktu tunggu: {countdown} detik
+            </p>
+          </div>
           <div className="space-y-4">
             {[...Array(6)].map((_, index) => (
               <div
