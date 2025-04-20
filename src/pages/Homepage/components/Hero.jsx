@@ -12,11 +12,11 @@ const Hero = () => {
   // Background images for the slider
   const backgroundImages = [heroImage1, heroImage2, heroImage3];
 
-  // Auto change background image every 5 seconds
+  // Auto change background image every 1 second (changed from 5000ms to 1000ms)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
+    }, 1000); // Changed to 1000ms (1 second)
 
     return () => clearInterval(interval);
   }, []);
@@ -29,7 +29,7 @@ const Hero = () => {
         {backgroundImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
+            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${
               currentSlide === index ? "opacity-100" : "opacity-0"
             }`}
             style={{ backgroundImage: `url(${image})` }}

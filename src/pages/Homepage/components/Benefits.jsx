@@ -101,18 +101,6 @@ const Benefits = () => {
             </div>
           ))}
         </div>
-
-        {/* Add this CSS to your component or in a <style> tag */}
-        <style jsx>{`
-          @media (min-width: 768px) {
-            .benefits-grid-odd {
-              grid-template-columns: repeat(3, 1fr);
-            }
-            .benefits-grid-odd > div:last-child {
-              grid-column-start: 2;
-            }
-          }
-        `}</style>
       </div>
     </section>
   );
