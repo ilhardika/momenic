@@ -1,5 +1,6 @@
 import React from "react";
 import { MessageCircle, Palette, CreditCard, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HowToOrder = () => {
   const steps = [
@@ -103,29 +104,33 @@ const HowToOrder = () => {
             </h3>
             <p className="text-white/80 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
               Undangan digital lengkap dengan fitur RSVP, Peta Lokasi, Amplop
-              Digital, Gallery Foto & Video, Timeline Acara, dan masih banyak
-              lagi hanya dengan
+              Digital, Gallery Foto & Video, dan masih banyak lagi mulai dari
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-4">
               <span className="text-white/60 text-base sm:text-lg line-through">
                 Rp 299.000
               </span>
               <span className="text-white text-2xl sm:text-4xl font-bold">
-                Rp 150.000
+                Rp 79.000
               </span>
               <span className="text-white/80 text-sm sm:text-base">
                 untuk semua tema
               </span>
             </div>
-            <a
-              href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20pesan%20Undangan%20Digital%20Website"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-white text-[#3F4D34] font-secondary text-sm sm:text-base hover:bg-white/90 transition-colors"
-            >
-              <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span>Pesan Sekarang</span>
-            </a>
+            <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
+              <Link
+                to={"/pricelist"}
+                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-white text-[#3F4D34] font-secondary text-sm sm:text-base hover:bg-white/90 transition-colors"
+              >
+                <span>Lihat daftar harga</span>
+              </Link>
+              <Link
+                to={"/tema"}
+                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-white text-[#3F4D34] font-secondary text-sm sm:text-base hover:bg-white/90 transition-colors"
+              >
+                <span>Lihat semua tema</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

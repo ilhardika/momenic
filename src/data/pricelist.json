@@ -1,0 +1,95 @@
+{
+    "pricelist": [
+        {
+            "theme": "3D Motion",
+            "discountPrice": 199000,
+            "originalPrice": 399000,
+            "withoutPhoto": {
+                "discountPrice": 169000,
+                "originalPrice": 369000
+            },
+            "details": {
+                "activePeriod": "14 months",
+                "maxGalleryPhotos": 30,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Art",
+            "discountPrice": 149000,
+            "originalPrice": 349000,
+            "withoutPhoto": {
+                "discountPrice": 119000,
+                "originalPrice": 319000
+            },
+            "details": {
+                "activePeriod": "1 tahun",
+                "maxGalleryPhotos": 20,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Luxury",
+            "discountPrice": 149000,
+            "originalPrice": 349000,
+            "withoutPhoto": {
+                "discountPrice": 119000,
+                "originalPrice": 319000
+            },
+            "details": {
+                "activePeriod": "1 tahun",
+                "maxGalleryPhotos": 20,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Special",
+            "discountPrice": 99000,
+            "originalPrice": 299000,
+            "withoutPhoto": {
+                "discountPrice": 79000,
+                "originalPrice": 279000
+            },
+            "details": {
+                "activePeriod": "1 tahun",
+                "maxGalleryPhotos": 10,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Khitan",
+            "discountPrice": 149000,
+            "originalPrice": 349000,
+            "details": {
+                "activePeriod": "1 tahun",
+                "maxGalleryPhotos": 10,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Aqiqah",
+            "discountPrice": 149000,
+            "originalPrice": 349000,
+            "details": {
+                "activePeriod": "1 tahun",
+                "maxGalleryPhotos": 10,
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true
+            }
+        },
+        {
+            "theme": "Without Photo",
+            "details": {
+                "activePeriod": "1 tahun",
+                "unlimitedInvitations": true,
+                "includesAllFeatures": true,
+                "excludes": ["Photos", "Gallery"]
+            }
+        }
+    ]
+}

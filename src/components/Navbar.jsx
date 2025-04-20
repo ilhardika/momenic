@@ -48,22 +48,16 @@ function Navbar() {
             Tema
           </Link>
           <Link
-            to="/video"
+            to="/pricelist"
             className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
           >
-            Video 3D
-          </Link>
-          <Link
-            to="/portfolio"
-            className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-          >
-            Portfolio
+            Tema
           </Link>
           <Link
             to="/musik"
             className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
           >
-            Music
+            Music List
           </Link>
         </div>
 
@@ -98,18 +92,11 @@ function Navbar() {
               Tema
             </Link>
             <Link
-              to="/video"
+              to="/pricelist"
               className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >
-              Video 3D
-            </Link>
-            <Link
-              to="/portfolio"
-              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              Portfolio
+              Pricelist
             </Link>
             <Link
               to="/musik"

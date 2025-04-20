@@ -28,12 +28,10 @@ const Benefits = () => {
       title: "Custom Music",
       description: "Pilih musik favoritmu untuk mengiringi undangan",
     },
-    {
-      icon: <UserCheck className="w-6 h-6" />,
-      title: "Layar Sapa Check-in",
-      description: "Sambut tamu undanganmu dengan layar sapa saat check-in",
-    },
   ];
+
+  // Determine if we have an odd number of benefits
+  const hasOddCount = benefits.length % 2 !== 0;
 
   return (
     <section className="relative py-20 sm:py-28 px-4 overflow-hidden bg-white">
@@ -42,22 +40,28 @@ const Benefits = () => {
         {/* Section Header */}
         <div className="text-center mb-16 sm:mb-20">
           <h2 className="font-primary text-3xl sm:text-4xl md:text-5xl text-[#3F4D34] mb-6">
-          Keuntungan Menggunakan Undngan Digital di Momenic
+            Keuntungan Menggunakan Undngan Digital di Momenic
           </h2>
           <p className="font-secondary text-[#3F4D34]/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-          Dirancang untuk membantu Kamu menciptakan undangan digital yang sempurna, sesuai dengan keinginan dan kebutuhan Kamu.
+            Dirancang untuk membantu Kamu menciptakan undangan digital yang
+            sempurna, sesuai dengan keinginan dan kebutuhan Kamu.
           </p>
         </div>
 
-        {/* Benefits Grid */}
+        {/* Benefits Grid - With proper centering for odd count */}
         <div
-          className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 
-                      max-w-4xl mx-auto"
+          className={`grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-[900px] mx-auto 
+          ${hasOddCount ? "benefits-grid-odd" : ""}`}
         >
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="group h-[200px] sm:h-[220px] w-full [perspective:1000px]"
+              className={`group h-[200px] sm:h-[220px] w-full [perspective:1000px]
+                ${
+                  hasOddCount && index === benefits.length - 1
+                    ? "col-span-2 sm:col-span-1 md:col-span-1 mx-auto max-w-[280px] sm:max-w-none"
+                    : ""
+                }`}
             >
               <div
                 className="relative h-full w-full transition-transform duration-500 
@@ -97,6 +101,18 @@ const Benefits = () => {
             </div>
           ))}
         </div>
+
+        {/* Add this CSS to your component or in a <style> tag */}
+        <style jsx>{`
+          @media (min-width: 768px) {
+            .benefits-grid-odd {
+              grid-template-columns: repeat(3, 1fr);
+            }
+            .benefits-grid-odd > div:last-child {
+              grid-column-start: 2;
+            }
+          }
+        `}</style>
       </div>
     </section>
   );
