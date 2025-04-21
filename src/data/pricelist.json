@@ -34,10 +34,6 @@
             "theme": "Luxury",
             "discountPrice": 149000,
             "originalPrice": 349000,
-            "withoutPhoto": {
-                "discountPrice": 119000,
-                "originalPrice": 319000
-            },
             "details": {
                 "activePeriod": "1 tahun",
                 "maxGalleryPhotos": 20,
