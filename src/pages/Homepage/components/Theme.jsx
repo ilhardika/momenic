@@ -297,7 +297,7 @@ const Theme = () => {
           )}
         </div>
 
-        {/* Themes Grid - With badges and hover effects - EXACT MATCH WITH THEMELIST */}
+        {/* Themes Grid - With badges and hover effects - */}
         {filteredThemes.length > 0 ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-5 sm:gap-7">
@@ -315,8 +315,8 @@ const Theme = () => {
                     />
                   </div>
 
-                  {/* Category badge - Exactly like ThemeList */}
-                  <div className="absolute top-2 left-2.5">
+                  {/* Category badge  */}
+                  <div className="absolute top-1 left-1 md:top-2.5 md:left-3 lg:top-3 lg:left-4">
                     <span className="inline-block min-w-20 text-center bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
                       {theme.category_type}
                     </span>
@@ -325,20 +325,20 @@ const Theme = () => {
                   {/* Overlay - Just black overlay, no zoom */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                  {/* Content on hover - EXACTLY like ThemeList */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-end p-3 sm:p-4 opacity-0 transition-all duration-300 group-hover:opacity-100 z-20">
-                    <h3 className="font-secondary text-base sm:text-lg text-white mb-3 sm:mb-4 text-center">
+                  {/* Content on hover */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-end p-2 sm:p-4 opacity-0 transition-all duration-300 group-hover:opacity-100 z-20">
+                    <h3 className="font-secondary text-sm sm:text-base md:text-lg text-white mb-2 sm:mb-3 text-center">
                       {theme.name}
                     </h3>
-                    <div className="flex gap-2 sm:gap-3 w-full">
+                    <div className="flex gap-1.5 sm:gap-2 w-full">
                       <a
                         href={theme.preview_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-secondary text-[#3F4D34] transition-all duration-200 hover:bg-[#3F4D34] hover:text-white hover:shadow-md"
+                        className="flex-1 inline-flex items-center justify-center space-x-1 rounded-full bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-secondary text-[#3F4D34] transition-all duration-200 hover:bg-[#3F4D34] hover:text-white hover:shadow-md"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span>Preview</span>
                       </a>
                       <a
@@ -347,10 +347,10 @@ const Theme = () => {
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center space-x-1 sm:space-x-2 rounded-full bg-[#128C7E] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-secondary text-white transition-all duration-200 hover:bg-[#0a6e5c] hover:shadow-md"
+                        className="flex-1 inline-flex items-center justify-center space-x-1 rounded-full bg-[#128C7E] px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-secondary text-white transition-all duration-200 hover:bg-[#0a6e5c] hover:shadow-md"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <MessageCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span>Pesan</span>
                       </a>
                     </div>

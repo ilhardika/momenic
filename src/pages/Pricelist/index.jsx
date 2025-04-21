@@ -21,24 +21,52 @@ function Pricelist() {
     return percentage;
   };
 
+  // Translate time periods to Indonesian
+  const translateTimePeriod = (period) => {
+    if (!period) return "";
+
+    // Replace common English time periods with Indonesian
+    return period
+      .replace("14 months", "14 bulan")
+      .replace("1 year", "1 tahun")
+      .replace("Lifetime", "Selamanya")
+      .replace("6 months", "6 bulan")
+      .replace("3 months", "3 bulan")
+      .replace("month", "bulan")
+      .replace("year", "tahun")
+      .replace("forever", "selamanya");
+  };
+
   // Key differentiating features only
   const getDifferentiatingFeatures = (item) => {
     const features = [];
 
-    // Add active period
+    // Add active period - with translated period
     if (item.details?.activePeriod) {
-      features.push(`Aktif selama ${item.details.activePeriod}`);
+      features.push(
+        `Aktif selama ${translateTimePeriod(item.details.activePeriod)}`
+      );
     }
 
-    // Add photo gallery info
+    // Add photo gallery info when "Dengan Foto" is selected
     if (withPhoto && item.details?.maxGalleryPhotos) {
       features.push(`${item.details.maxGalleryPhotos} foto gallery`);
     }
 
-    // For "Without Photo" theme, add excludes
+    // Always add "Tanpa Foto" as a feature when that option is selected
+    if (!withPhoto) {
+      features.push("Tanpa foto gallery");
+    }
+
+    // For "Without Photo" theme, add additional excludes
     if (!withPhoto && item.details?.excludes) {
       item.details.excludes.forEach((exclude) => {
-        features.push(`Tanpa ${exclude}`);
+        if (
+          exclude.toLowerCase() !== "foto" &&
+          exclude.toLowerCase() !== "foto gallery"
+        ) {
+          features.push(`Tanpa ${exclude}`);
+        }
       });
     }
 
@@ -151,24 +179,24 @@ function Pricelist() {
                     {item.theme}
                   </h3>
 
-                  {/* Price Section */}
-                  <div className="flex items-baseline mb-1">
-                    <span
-                      className={`text-2xl sm:text-3xl font-semibold ${
-                        isFeatured ? "text-white" : "text-[#2A3824]"
-                      }`}
-                    >
-                      {formatCurrency(price.discount)}
-                    </span>
+                  {/* Price Section - Stacked on mobile, inline on desktop */}
+                  <div className="flex flex-col sm:flex-row sm:items-baseline mb-1">
                     {price.discount < price.original && (
                       <span
-                        className={`ml-2 text-xs sm:text-sm line-through ${
+                        className={`text-xs line-through mb-1 sm:mb-0 sm:text-sm sm:ml-0 sm:order-2 sm:ml-2 ${
                           isFeatured ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
                         {formatCurrency(price.original)}
                       </span>
                     )}
+                    <span
+                      className={`text-2xl sm:text-3xl font-semibold sm:order-1 ${
+                        isFeatured ? "text-white" : "text-[#2A3824]"
+                      }`}
+                    >
+                      {formatCurrency(price.discount)}
+                    </span>
                   </div>
 
                   {/* Discount Badge */}
@@ -184,18 +212,7 @@ function Pricelist() {
                     </span>
                   )}
 
-                  {/* Without Photo Badge */}
-                  {!withPhoto && (
-                    <div
-                      className={`inline-block px-2 py-0.5 rounded-full text-xs ${
-                        isFeatured
-                          ? "text-white bg-[#ffffff33]"
-                          : "text-[#404C34] bg-[#40403322]"
-                      } font-medium mt-1 ml-2`}
-                    >
-                      Tanpa Foto
-                    </div>
-                  )}
+                  {/* Removed "Tanpa Foto" badge from here */}
                 </div>
 
                 {/* Key Features */}
@@ -275,9 +292,7 @@ function Pricelist() {
               },
             ].map((faq, idx) => (
               <div key={idx} className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg text-[#2A3824] mb-2">
-                  {faq.question}
-                </h3>
+                <h3 className="text-lg text-[#2A3824] mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>
             ))}

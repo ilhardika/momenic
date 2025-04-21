@@ -40,7 +40,7 @@ const Benefits = () => {
         {/* Section Header */}
         <div className="text-center mb-16 sm:mb-20">
           <h2 className="font-primary text-3xl sm:text-4xl md:text-5xl text-[#3F4D34] mb-6">
-            Keuntungan Menggunakan Undngan Digital di Momenic
+            Keuntungan Menggunakan Undangan Digital di Momenic
           </h2>
           <p className="font-secondary text-[#3F4D34]/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
             Dirancang untuk membantu Kamu menciptakan undangan digital yang
