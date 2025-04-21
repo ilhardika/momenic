@@ -393,7 +393,7 @@ const ThemeList = () => {
                   </div>
 
                   {/* Theme type badge */}
-                  <div className="absolute top-2 left-2.5">
+                  <div className="absolute top-1 left-1 md:top-2.5 md:left-3 lg:top-3 lg:left-4">
                     <span className="inline-block min-w-20 text-center bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
                       {theme.category_type}
                     </span>
