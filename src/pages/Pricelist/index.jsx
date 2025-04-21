@@ -183,7 +183,7 @@ function Pricelist() {
                   <div className="flex flex-col sm:flex-row sm:items-baseline mb-1">
                     {price.discount < price.original && (
                       <span
-                        className={`text-xs line-through mb-1 sm:mb-0 sm:text-sm sm:ml-0 sm:order-2 sm:ml-2 ${
+                        className={`text-xs line-through mb-1 sm:mb-0 sm:text-sm sm:order-2 sm:ml-2 ${
                           isFeatured ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
