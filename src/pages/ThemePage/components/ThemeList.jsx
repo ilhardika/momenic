@@ -289,6 +289,31 @@ const ThemeList = () => {
 
   return (
     <div className="px-4 py-6">
+      {/* Floating Price Badge - Fixed at top of screen */}
+      {selectedCategory && (
+        <div className="fixed top-[80px] left-1/2 transform -translate-x-1/2 z-40">
+          <div className="animate-fadeIn bg-[#3F4D34] text-white px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 whitespace-nowrap">
+            <span className="font-secondary text-xs sm:text-sm">
+              {selectedCategory} {withPhoto ? "Dengan" : "Tanpa"} Foto:
+            </span>
+            <div className="flex items-baseline">
+              {getThemePrice(selectedCategory, withPhoto).original >
+                getThemePrice(selectedCategory, withPhoto).discount && (
+                <span className="text-xs line-through text-white/70 mr-1.5">
+                  {formatCurrency(
+                    getThemePrice(selectedCategory, withPhoto).original
+                  )}
+                </span>
+              )}
+              <span className="text-sm sm:text-base font-semibold">
+                {formatCurrency(
+                  getThemePrice(selectedCategory, withPhoto).discount
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto max-w-6xl">
         {/* Search and Filters */}
         <div className="mb-10 space-y-6">
@@ -355,6 +380,7 @@ const ThemeList = () => {
               </div>
             </div>
           )}
+
         </div>
 
         {/* Empty State Message */}
@@ -433,7 +459,7 @@ const ThemeList = () => {
                     </div>
                   </div>
 
-                  {/* Clickable overlay for direct theme URLs - Move this below buttons */}
+                  {/* Clickable overlay for direct theme URLs */}
                   <button
                     onClick={() => handleThemeSelect(theme)}
                     className="absolute inset-0 z-10 opacity-0"

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import pricelist from "../../data/pricelist.json";
-import { Check, X, ChevronRight } from "lucide-react";
+import { Check, X, ArrowRight } from "lucide-react";
 
 function Pricelist() {
   const [withPhoto, setWithPhoto] = useState(true);
+  const navigate = useNavigate();
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -71,6 +73,14 @@ function Pricelist() {
     }
 
     return features;
+  };
+
+  // Handle redirect to theme page with appropriate search params
+  const handleViewThemes = (themeType) => {
+    const params = new URLSearchParams();
+    params.set("category", themeType);
+    params.set("withphoto", withPhoto.toString());
+    navigate(`/tema?${params.toString()}`);
   };
 
   return (
@@ -211,8 +221,6 @@ function Pricelist() {
                       Hemat {discountPercentage}%
                     </span>
                   )}
-
-                  {/* Removed "Tanpa Foto" badge from here */}
                 </div>
 
                 {/* Key Features */}
@@ -239,23 +247,19 @@ function Pricelist() {
                   </ul>
                 </div>
 
-                {/* CTA Button */}
+                {/* CTA Button - Changed from "Pesan" to "Lihat Tema" */}
                 <div className="p-4 pt-2 sm:p-4">
-                  <a
-                    href={`https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20pesan%20undangan%20digital%20${
-                      item.theme
-                    }%20${withPhoto ? "dengan" : "tanpa"}%20foto`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => handleViewThemes(item.theme)}
                     className={`w-full inline-flex justify-center items-center px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-all ${
                       isFeatured
                         ? "bg-[#404C34] hover:bg-[#526444] text-white shadow-md hover:shadow-lg"
                         : "bg-white text-[#404C34] border-2 border-[#404C34] hover:bg-[#F8FAF5] group-hover:border-[#526444]"
                     }`}
                   >
-                    <span>Pesan</span>
-                    <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </a>
+                    <span>Lihat Tema</span>
+                    <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </div>
               </div>
             );

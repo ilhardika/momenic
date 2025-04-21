@@ -392,7 +392,7 @@ const Theme = () => {
                       Loading...
                     </span>
                   ) : (
-                    <span className="flex items-center">
+                    <span className="flex items-center  ">
                       Muat Lebih Banyak
                       <span className="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
                         {filteredThemes.length - itemsToShow}
@@ -404,7 +404,7 @@ const Theme = () => {
             )}
 
             {/* Results Counter */}
-            <div className="mt-6 text-center text-sm text-gray-500">
+            <div className="mt-6 text-center text-sm text-gray-500 font-secondary">
               Menampilkan{" "}
               <span className="font-medium">{displayedThemes.length}</span> dari{" "}
               <span className="font-medium">{filteredThemes.length}</span> tema
