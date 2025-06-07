@@ -42,45 +42,48 @@ export const useMusic = () => {
         }
       }
 
-      // For production, try the fetch API with no-cors mode
+      // For production, try multiple CORS proxies
       if (isProduction) {
         try {
-          console.log("Using sample tracks for production environment");
+          console.log("Trying alternative proxies for production environment");
 
-          // Create dummy data for production since all approaches are failing
-          const dummyMusic = [
-            {
-              title: "Wedding March - Sample",
-              category: "wedding",
-              musicUrl:
-                "https://assets.mixkit.co/music/preview/mixkit-wedding-light-455.mp3",
-            },
-            {
-              title: "Romantic Piano - Sample",
-              category: "romantic",
-              musicUrl:
-                "https://assets.mixkit.co/music/preview/mixkit-a-very-happy-christmas-897.mp3",
-            },
-            {
-              title: "Love Theme - Sample",
-              category: "wedding",
-              musicUrl:
-                "https://assets.mixkit.co/music/preview/mixkit-piano-ballad-483.mp3",
-            },
-            {
-              title: "Celebration - Sample",
-              category: "wedding",
-              musicUrl:
-                "https://assets.mixkit.co/music/preview/mixkit-happy-celebration-179.mp3",
-            },
+          // Try different proxies that might work in production
+          const productionProxies = [
+            "https://corsproxy.vercel.app/?",
+            "https://corsanywhere.herokuapp.com/",
+            "https://api.allorigins.win/raw?url=",
           ];
 
-          // In production, just use these sample tracks
-          setMusicList(dummyMusic);
-          setLoading(false); // Explicitly set loading to false
-          return; // This exits before setting loading=false in finally block
+          for (const proxy of productionProxies) {
+            try {
+              console.log(`Trying production proxy: ${proxy}`);
+              const targetUrl = encodeURIComponent(
+                "https://undanganwebku.com/music"
+              );
+
+              const response = await axios.get(`${proxy}${targetUrl}`, {
+                timeout: 5000, // Shorter timeout to quickly try alternatives
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                },
+              });
+
+              if (response.data && typeof response.data === "string") {
+                // Process the first 10 items for better performance
+                parseAndProcessMusic(response.data, 10);
+                return;
+              }
+            } catch (proxyErr) {
+              console.warn(`Error with proxy ${proxy}:`, proxyErr.message);
+              // Continue to the next proxy
+            }
+          }
+
+          // If we get here, all proxies failed
+          throw new Error("All proxies failed in production");
         } catch (err) {
-          console.warn("Sample data approach failed:", err);
+          console.warn("All production proxies failed:", err);
+          throw err; // Re-throw to be caught by the outer catch
         }
       }
 
@@ -88,17 +91,21 @@ export const useMusic = () => {
       throw new Error("All approaches to fetch music data failed");
     } catch (err) {
       console.error("Error fetching music:", err);
+
+      // Provide appropriate error message based on environment
       const isProduction =
         window.location.hostname !== "localhost" &&
         window.location.hostname !== "127.0.0.1";
 
       if (isProduction) {
         setError(
-          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Kami sedang memperbaiki masalah ini."
+          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Fitur ini tersedia saat aplikasi dalam tahap pengembangan."
         );
       } else {
         setError("Gagal memuat daftar musik. Silakan coba refresh halaman.");
       }
+
+      // Set empty music list since we don't want dummy data
       setMusicList([]);
     } finally {
       setLoading(false); // Always ensure loading is set to false
