@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Eye, MessageCircle, Search as SearchIcon } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Search from "../../../components/Search";
@@ -380,7 +380,6 @@ const ThemeList = () => {
               </div>
             </div>
           )}
-
         </div>
 
         {/* Empty State Message */}

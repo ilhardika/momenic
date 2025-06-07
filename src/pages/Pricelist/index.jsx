@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import pricelist from "../../data/pricelist.json";
 import { Check, X, ArrowRight } from "lucide-react";
