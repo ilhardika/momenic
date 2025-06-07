@@ -1,4 +1,11 @@
-import { Infinity, Users, Pencil, Clock, Music } from "lucide-react";
+import {
+  Infinity,
+  Users,
+  Pencil,
+  Clock,
+  Music,
+  BookOpenText,
+} from "lucide-react";
 
 const Benefits = () => {
   const benefits = [
@@ -13,6 +20,12 @@ const Benefits = () => {
       description: "Kirim undangan ke semua tamu tanpa batasan jumlah",
     },
     {
+      icon: <BookOpenText className="w-6 h-6" />,
+      title: "Buku Tamu Digital",
+      description:
+        "Kenangan ucapan manis oleh tamu lewat teks atau video langsung di undangan digitalmu",
+    },
+    {
       icon: <Pencil className="w-6 h-6" />,
       title: "Free Revisi",
       description: "Revisi konten undangan secara gratis sebelum disebarkan",
@@ -20,7 +33,8 @@ const Benefits = () => {
     {
       icon: <Clock className="w-6 h-6" />,
       title: "One Day Service",
-      description: "Proses pembuatan undangan selesai dalam satu hari kerja setelah data lengkap diterima",
+      description:
+        "Proses pembuatan undangan selesai dalam satu hari kerja setelah data lengkap diterima",
     },
     {
       icon: <Music className="w-6 h-6" />,
