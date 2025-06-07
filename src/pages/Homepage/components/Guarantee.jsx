@@ -1,4 +1,3 @@
-import React from "react";
 import { Clock, CheckCircle } from "lucide-react";
 import guaranteeImage from "../../../assets/guarantee.png";
 

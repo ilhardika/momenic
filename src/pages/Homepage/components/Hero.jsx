@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MessageCircle, Sparkles, Headset } from "lucide-react";
 
 // Import your hero images here
@@ -69,7 +69,7 @@ const Hero = () => {
             <h1 className="font-primary text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-normal text-white leading-tight opacity-0 animate-[fadeIn_1s_ease-out_0.3s_forwards] drop-shadow-md">
               Undangan Digital Express
               <span className="block italic mt-1 sm:mt-2 text-[#E5E5E5] text-[20px] sm:text-[26px] md:text-[32px] opacity-0 animate-[fadeIn_1s_ease-out_0.6s_forwards]">
-                Premum, Murah, Fitur Lengkap
+                Premium, Murah, Fitur Lengkap
               </span>
             </h1>
 

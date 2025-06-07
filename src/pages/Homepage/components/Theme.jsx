@@ -13,7 +13,13 @@ const Theme = () => {
 
   // For text animation only - now using Wedding, Khitan, Aqiqah
   const [animatedCategory, setAnimatedCategory] = useState("Wedding");
-  const animationCategories = ["Wedding/Pernikahan", "Engagement/Lamaran", "Ulang Tahun", "Khitan", "Aqiqah"];
+  const animationCategories = [
+    "Wedding/Pernikahan",
+    "Engagement/Lamaran",
+    "Ulang Tahun",
+    "Khitan",
+    "Aqiqah",
+  ];
 
   // Auto rotate text category every second with specified values
   useEffect(() => {
@@ -26,7 +32,7 @@ const Theme = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  });
 
   // Process theme data on component mount
   useEffect(() => {

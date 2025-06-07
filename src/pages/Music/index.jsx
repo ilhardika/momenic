@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useMusic from "../../hooks/useMusic";
-import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import Search from "../../components/Search";
 import Pagination from "../../components/Pagination";
 

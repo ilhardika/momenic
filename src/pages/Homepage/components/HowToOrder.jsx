@@ -1,4 +1,3 @@
-import React from "react";
 import { MessageCircle, Palette, CreditCard, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
