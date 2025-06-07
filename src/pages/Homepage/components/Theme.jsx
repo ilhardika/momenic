@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Eye, MessageCircle } from "lucide-react";
 import themeData from "../../../data/theme.json";
 import pricelist from "../../../data/pricelist.json";
@@ -13,7 +13,7 @@ const Theme = () => {
 
   // For text animation only - now using Wedding, Khitan, Aqiqah
   const [animatedCategory, setAnimatedCategory] = useState("Wedding");
-  const animationCategories = ["Wedding", "Khitan", "Aqiqah"];
+  const animationCategories = ["Wedding/Pernikahan", "Engagement/Lamaran", "Ulang Tahun", "Khitan", "Aqiqah"];
 
   // Auto rotate text category every second with specified values
   useEffect(() => {

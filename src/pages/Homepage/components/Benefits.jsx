@@ -1,5 +1,4 @@
-import React from "react";
-import { Infinity, Users, Pencil, Clock, Music, UserCheck } from "lucide-react";
+import { Infinity, Users, Pencil, Clock, Music } from "lucide-react";
 
 const Benefits = () => {
   const benefits = [
@@ -21,7 +20,7 @@ const Benefits = () => {
     {
       icon: <Clock className="w-6 h-6" />,
       title: "One Day Service",
-      description: "Proses pembuatan undangan selesai dalam satu hari kerja",
+      description: "Proses pembuatan undangan selesai dalam satu hari kerja setelah data lengkap diterima",
     },
     {
       icon: <Music className="w-6 h-6" />,
@@ -29,9 +28,6 @@ const Benefits = () => {
       description: "Pilih musik favoritmu untuk mengiringi undangan",
     },
   ];
-
-  // Determine if we have an odd number of benefits
-  const hasOddCount = benefits.length % 2 !== 0;
 
   return (
     <section className="relative py-20 sm:py-28 px-4 overflow-hidden bg-white">
@@ -48,54 +44,48 @@ const Benefits = () => {
           </p>
         </div>
 
-        {/* Benefits Grid - With proper centering for odd count */}
-        <div
-          className={`grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-[900px] mx-auto 
-          ${hasOddCount ? "benefits-grid-odd" : ""}`}
-        >
+        {/* Benefits with Flexbox layout - matching Features component */}
+        <div className="flex flex-wrap justify-center max-w-4xl mx-auto">
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className={`group h-[200px] sm:h-[220px] w-full [perspective:1000px]
-                ${
-                  hasOddCount && index === benefits.length - 1
-                    ? "col-span-2 sm:col-span-1 md:col-span-1 mx-auto max-w-[280px] sm:max-w-none"
-                    : ""
-                }`}
+              className="w-1/2 md:w-1/3 px-2 sm:px-3 lg:px-4 mb-4 sm:mb-6 lg:mb-8"
             >
-              <div
-                className="relative h-full w-full transition-transform duration-500 
-                         [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]"
-              >
-                {/* Front of card */}
+              <div className="group h-[170px] sm:h-[220px] w-full [perspective:1000px]">
                 <div
-                  className="absolute inset-0 p-4 sm:p-6 rounded-2xl bg-white 
-                          border border-[#3F4D34]/10 hover:border-[#3F4D34]/20
-                          flex flex-col items-center justify-center text-center
-                          [backface-visibility:hidden]"
+                  className="relative h-full w-full transition-transform duration-500 
+                           [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]"
                 >
+                  {/* Front of card */}
                   <div
-                    className="w-14 h-14 rounded-2xl bg-[#3F4D34]/10
-                            flex items-center justify-center mb-4
-                            transition-all duration-300 ease-in-out
-                            group-hover:scale-110"
+                    className="absolute inset-0 p-3 sm:p-6 rounded-2xl bg-white 
+                            border border-[#3F4D34]/10 hover:border-[#3F4D34]/20
+                            flex flex-col items-center justify-center text-center
+                            [backface-visibility:hidden]"
                   >
-                    <div className="text-[#3F4D34]">{benefit.icon}</div>
+                    <div
+                      className="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-[#3F4D34]/10
+                              flex items-center justify-center mb-2 sm:mb-4
+                              transition-all duration-300 ease-in-out
+                              group-hover:scale-110"
+                    >
+                      <div className="text-[#3F4D34]">{benefit.icon}</div>
+                    </div>
+                    <h3 className="font-secondary text-sm sm:text-lg md:text-xl text-[#3F4D34]">
+                      {benefit.title}
+                    </h3>
                   </div>
-                  <h3 className="font-secondary text-lg sm:text-xl text-[#3F4D34]">
-                    {benefit.title}
-                  </h3>
-                </div>
 
-                {/* Back of card */}
-                <div
-                  className="absolute inset-0 p-4 sm:p-6 rounded-2xl bg-[#3F4D34]
-                          flex items-center justify-center text-center
-                          [backface-visibility:hidden] [transform:rotateX(180deg)]"
-                >
-                  <p className="font-secondary text-white text-sm sm:text-base leading-relaxed">
-                    {benefit.description}
-                  </p>
+                  {/* Back of card */}
+                  <div
+                    className="absolute inset-0 p-3 sm:p-6 rounded-2xl bg-[#3F4D34]
+                            flex items-center justify-center text-center
+                            [backface-visibility:hidden] [transform:rotateX(180deg)]"
+                  >
+                    <p className="font-secondary text-white text-xs sm:text-base leading-relaxed">
+                      {benefit.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
