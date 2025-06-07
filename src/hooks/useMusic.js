@@ -50,9 +50,12 @@ export const useMusic = () => {
           // Try different proxies that might work in production
           const productionProxies = [
             "https://corsproxy.vercel.app/?",
-            "https://corsanywhere.herokuapp.com/",
             "https://api.allorigins.win/raw?url=",
+            "https://api.codetabs.com/v1/proxy?quest=",
+            "https://corsanywhere.herokuapp.com/",
           ];
+
+          let parseSuccess = false;
 
           for (const proxy of productionProxies) {
             try {
@@ -62,16 +65,38 @@ export const useMusic = () => {
               );
 
               const response = await axios.get(`${proxy}${targetUrl}`, {
-                timeout: 5000, // Shorter timeout to quickly try alternatives
+                timeout: 8000, // Slightly longer timeout
                 headers: {
                   "X-Requested-With": "XMLHttpRequest",
                 },
               });
 
-              if (response.data && typeof response.data === "string") {
-                // Process the first 10 items for better performance
-                parseAndProcessMusic(response.data, 10);
-                return;
+              // Verify that we got a valid response with expected content
+              if (
+                response.data &&
+                typeof response.data === "string" &&
+                response.data.includes("d-flex") &&
+                response.data.includes("btn-music")
+              ) {
+                console.log(
+                  `Got valid HTML response from ${proxy}, attempting to parse...`
+                );
+
+                // Process the response and check if parsing was successful
+                parseSuccess = parseAndProcessMusic(response.data, 10);
+
+                if (parseSuccess) {
+                  console.log(`Successfully parsed music data from ${proxy}`);
+                  return; // Exit the function on success
+                } else {
+                  console.warn(
+                    `Failed to parse valid music data from ${proxy}`
+                  );
+                }
+              } else {
+                console.warn(
+                  `Response from ${proxy} doesn't have expected HTML content`
+                );
               }
             } catch (proxyErr) {
               console.warn(`Error with proxy ${proxy}:`, proxyErr.message);
@@ -115,6 +140,18 @@ export const useMusic = () => {
   // Helper function to parse and process music data from HTML
   const parseAndProcessMusic = (htmlContent, limit = 10) => {
     try {
+      // Validate that the HTML content actually contains expected elements
+      if (
+        !htmlContent ||
+        !htmlContent.includes("d-flex") ||
+        !htmlContent.includes("btn-music")
+      ) {
+        console.warn(
+          "HTML content doesn't appear to have the expected music elements"
+        );
+        throw new Error("Invalid HTML content format");
+      }
+
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(htmlContent, "text/html");
 
@@ -131,6 +168,7 @@ export const useMusic = () => {
 
         // Only process up to the specified limit
         const elementsToProcess = Math.min(musicElements.length, limit);
+        let successCount = 0;
 
         for (let i = 0; i < elementsToProcess; i++) {
           const element = musicElements[i];
@@ -149,20 +187,28 @@ export const useMusic = () => {
 
             if (title && musicUrl) {
               parsedMusic.push({ title, category, musicUrl });
+              successCount++;
             }
           }
         }
 
-        console.log(`Successfully parsed ${parsedMusic.length} music items`);
-        setMusicList(parsedMusic);
-        setLoading(false); // Explicitly set loading to false after updating state
+        // Only consider it successful if we found at least one music item
+        if (parsedMusic.length > 0) {
+          console.log(`Successfully parsed ${parsedMusic.length} music items`);
+          setMusicList(parsedMusic);
+          setLoading(false); // Explicitly set loading to false after updating state
+          return true; // Indicate success
+        } else {
+          throw new Error("Failed to extract any valid music items");
+        }
       } else {
         throw new Error("No music elements found");
       }
     } catch (error) {
       console.error("Error parsing music data:", error);
-      setError("Gagal memproses data musik.");
+      // Don't set error state here - let the calling function decide
       setLoading(false); // Ensure loading is false even on parsing error
+      return false; // Indicate failure
     }
   };
 
