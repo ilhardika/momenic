@@ -18,14 +18,20 @@ export const useMusic = () => {
         window.location.hostname !== "127.0.0.1";
 
       // Use different proxies based on environment
-      // For production, focus on the most reliable options
+      // For production, try some additional options that might have fewer restrictions
       const corsProxies = isProduction
         ? [
-            // More reliable proxies for production
+            // Public JSONP service that works with CORS
+            "https://jsonp.afeld.me/?url=",
+            // More advanced proxies with better protection against blocks
+            "https://api.codetabs.com/v1/proxy/?quest=",
+            "https://cors-proxy.htmldriven.com/?url=",
+            "https://corsproxy.io/?",
+            // Less common proxies that may not be blocked
+            "https://corsproxy.org/?",
+            // Standard options as fallbacks
             "https://corsproxy.vercel.app/?",
             "https://api.allorigins.win/raw?url=",
-            "https://proxy.cors.sh/",
-            "https://cors-anywhere.herokuapp.com/",
           ]
         : [
             // Standard proxies for development
@@ -38,7 +44,7 @@ export const useMusic = () => {
 
       // Wait before trying
       if (retryCount === 0) {
-        const waitTime = isProduction ? 2000 : 1000; // Shorter wait times
+        const waitTime = isProduction ? 2000 : 1000;
         console.log(
           `Waiting for ${waitTime / 1000} seconds before fetching data...`
         );
@@ -55,18 +61,32 @@ export const useMusic = () => {
         try {
           console.log(`Fetching music data with proxy: ${proxy}`);
 
-          // Different approach for different proxies
-          const response = await axios.get(`${proxy}${targetUrl}`, {
-            timeout: 8000, // Shorter timeout for faster feedback
+          // Try a different approach for production requests
+          const config = {
+            timeout: 8000,
             headers: {
+              // Keep headers minimal to avoid CORS issues
               "X-Requested-With": "XMLHttpRequest",
             },
-          });
+          };
+
+          // Add some randomization to avoid caching issues
+          const cacheBuster = isProduction ? `&_=${Date.now()}` : "";
+          const proxyUrl = `${proxy}${targetUrl}${cacheBuster}`;
+
+          const response = await axios.get(proxyUrl, config);
 
           // Process HTML response
-          if (response.data && typeof response.data === "string") {
+          let responseData = response.data;
+
+          // Some proxies return an object with the data in a content property
+          if (typeof responseData === "object" && responseData.content) {
+            responseData = responseData.content;
+          }
+
+          if (responseData && typeof responseData === "string") {
             const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(response.data, "text/html");
+            const htmlDoc = parser.parseFromString(responseData, "text/html");
 
             // Try multiple selectors that might contain music data
             const selectors = [".d-flex", ".music-item", ".music-list-item"];
@@ -179,7 +199,7 @@ export const useMusic = () => {
 
         if (isProduction) {
           setError(
-            "Fitur ini sedang dalam perbaikan. Silakan kembali lagi nanti."
+            "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Kami sedang memperbaiki masalah ini."
           );
         } else {
           setError("Gagal memuat daftar musik. Silakan coba refresh halaman.");
