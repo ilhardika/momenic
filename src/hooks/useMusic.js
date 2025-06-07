@@ -12,22 +12,33 @@ export const useMusic = () => {
       setLoading(true);
       setError(null);
 
-      // Use multiple proxies to increase chances of success in production
-      const corsProxies = [
-        "https://thingproxy.freeboard.io/fetch/",
-        "https://api.allorigins.win/raw?url=",
-        "https://corsproxy.io/?",
-        "https://api.codetabs.com/v1/proxy?quest=",
-        "https://cors.bridged.cc/",
-      ];
-
-      // Wait before trying in production
+      // Check if we're running in production
       const isProduction =
         window.location.hostname !== "localhost" &&
         window.location.hostname !== "127.0.0.1";
 
+      // Use different proxies based on environment
+      // For production, focus on the most reliable options
+      const corsProxies = isProduction
+        ? [
+            // More reliable proxies for production
+            "https://corsproxy.vercel.app/?",
+            "https://api.allorigins.win/raw?url=",
+            "https://proxy.cors.sh/",
+            "https://cors-anywhere.herokuapp.com/",
+          ]
+        : [
+            // Standard proxies for development
+            "https://thingproxy.freeboard.io/fetch/",
+            "https://api.allorigins.win/raw?url=",
+            "https://corsproxy.io/?",
+            "https://api.codetabs.com/v1/proxy?quest=",
+            "https://cors.bridged.cc/",
+          ];
+
+      // Wait before trying
       if (retryCount === 0) {
-        const waitTime = isProduction ? 5000 : 2000;
+        const waitTime = isProduction ? 2000 : 1000; // Shorter wait times
         console.log(
           `Waiting for ${waitTime / 1000} seconds before fetching data...`
         );
@@ -43,11 +54,12 @@ export const useMusic = () => {
 
         try {
           console.log(`Fetching music data with proxy: ${proxy}`);
+
+          // Different approach for different proxies
           const response = await axios.get(`${proxy}${targetUrl}`, {
-            timeout: 30000, // Long timeout for production
+            timeout: 8000, // Shorter timeout for faster feedback
             headers: {
               "X-Requested-With": "XMLHttpRequest",
-              // Avoid setting Origin header as it causes issues
             },
           });
 
@@ -157,56 +169,29 @@ export const useMusic = () => {
         } catch (err) {
           console.warn(`Error with proxy ${proxy}:`, err.message);
           // Add a small delay before trying the next proxy
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 300));
         }
       }
 
       // If all proxies failed
       if (!succeeded) {
-        // Create some minimal data instead of using fallbackMusicData
-        console.log("All proxies failed, creating minimal data set");
+        console.log("All proxies failed to fetch music data");
 
-        // Generate a simple dataset dynamically
-        const minimalMusicList = [
-          {
-            title: "Sample Wedding Music",
-            category: "wedding",
-            musicUrl:
-              "https://assets.mixkit.co/music/preview/mixkit-wedding-light-455.mp3",
-          },
-          {
-            title: "Romantic Background",
-            category: "romantic",
-            musicUrl:
-              "https://assets.mixkit.co/music/preview/mixkit-a-very-happy-christmas-897.mp3",
-          },
-          {
-            title: "Love Theme",
-            category: "wedding",
-            musicUrl:
-              "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
-          },
-        ];
+        if (isProduction) {
+          setError(
+            "Fitur ini sedang dalam perbaikan. Silakan kembali lagi nanti."
+          );
+        } else {
+          setError("Gagal memuat daftar musik. Silakan coba refresh halaman.");
+        }
 
-        setMusicList(minimalMusicList);
-
-        // Don't set error since we're providing data
-        setError(null);
+        // Set an empty music list
+        setMusicList([]);
       }
     } catch (err) {
       console.error("Error fetching music:", err);
-      setError("Failed to load music data. Please try refreshing the page.");
-
-      // Create minimal music data on catastrophic error
-      const emergencyData = [
-        {
-          title: "Wedding March",
-          category: "wedding",
-          musicUrl:
-            "https://assets.mixkit.co/music/preview/mixkit-wedding-light-455.mp3",
-        },
-      ];
-      setMusicList(emergencyData);
+      setError("Terjadi kesalahan saat memuat data. Silakan coba lagi nanti.");
+      setMusicList([]);
     } finally {
       if (loading) setLoading(false);
       setRetryCount((prev) => prev + 1);
