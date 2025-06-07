@@ -49,6 +49,12 @@ export const useMusic = () => {
 
           // Try different proxies that might work in production
           const productionProxies = [
+            // Try more reliable proxies first
+            "https://corsproxy.io/?",
+            "https://proxy.cors.sh/",
+            "https://corsproxy.org/?url=",
+            "https://api.scraperapi.com/v1/?api_key=a3b15fb265d162745958d1dad7d319ef&url=",
+            // Keep existing proxies as fallbacks
             "https://corsproxy.vercel.app/?",
             "https://api.allorigins.win/raw?url=",
             "https://api.codetabs.com/v1/proxy?quest=",
@@ -124,13 +130,13 @@ export const useMusic = () => {
 
       if (isProduction) {
         setError(
-          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Fitur ini tersedia saat aplikasi dalam tahap pengembangan."
+          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Coba lagi nanti atau gunakan browser berbeda."
         );
       } else {
         setError("Gagal memuat daftar musik. Silakan coba refresh halaman.");
       }
 
-      // Set empty music list since we don't want dummy data
+      // Set empty music list
       setMusicList([]);
     } finally {
       setLoading(false); // Always ensure loading is set to false
