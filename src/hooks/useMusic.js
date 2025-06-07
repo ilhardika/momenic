@@ -47,14 +47,18 @@ export const useMusic = () => {
         try {
           console.log("Trying alternative proxies for production environment");
 
-          // Try different proxies that might work in production
+          // Updated list of proxies with more reliable options first
           const productionProxies = [
-            // Try more reliable proxies first
+            "https://corsproxy.serveo.net/",
+            "https://api-bdc.net/data/cors-proxy?url=",
+            "https://bypass-cors.herokuapp.com/",
+            "https://yacdn.org/proxy/",
+            "https://thingproxy.freeboard.io/fetch/",
+            // Keep existing proxies as fallbacks
             "https://corsproxy.io/?",
             "https://proxy.cors.sh/",
             "https://corsproxy.org/?url=",
             "https://api.scraperapi.com/v1/?api_key=a3b15fb265d162745958d1dad7d319ef&url=",
-            // Keep existing proxies as fallbacks
             "https://corsproxy.vercel.app/?",
             "https://api.allorigins.win/raw?url=",
             "https://api.codetabs.com/v1/proxy?quest=",
@@ -71,9 +75,15 @@ export const useMusic = () => {
               );
 
               const response = await axios.get(`${proxy}${targetUrl}`, {
-                timeout: 8000, // Slightly longer timeout
+                timeout: 10000, // Increased timeout
                 headers: {
                   "X-Requested-With": "XMLHttpRequest",
+                  Origin: "https://momenic.vercel.app",
+                  Accept: "text/html,application/xhtml+xml,application/xml",
+                },
+                // Try to bypass browser cache for each request
+                params: {
+                  _: new Date().getTime(),
                 },
               });
 
@@ -130,7 +140,7 @@ export const useMusic = () => {
 
       if (isProduction) {
         setError(
-          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Coba lagi nanti atau gunakan browser berbeda."
+          "Mohon maaf, daftar musik tidak dapat dimuat saat ini. Coba gunakan browser desktop atau refresh halaman."
         );
       } else {
         setError("Gagal memuat daftar musik. Silakan coba refresh halaman.");
