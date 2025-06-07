@@ -31,7 +31,7 @@ function Music() {
         currentlyPlaying.audio = null;
       }
     };
-  }, []);
+  });
 
   // Add countdown effect
   useEffect(() => {
