@@ -35,42 +35,107 @@ const useMusic = () => {
 
         setLoading(true);
 
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const proxyResponse = await fetch(
-          proxyUrl + encodeURIComponent(`${BASE_URL}/music`)
-        );
+        // Try multiple CORS proxies in case one fails
+        const proxyServices = [
+          "https://corsproxy.io/?",
+          "https://cors-anywhere.herokuapp.com/",
+          "https://api.codetabs.com/v1/proxy?quest=",
+        ];
 
-        const html = await proxyResponse.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
+        let html = "";
+        let proxySuccess = false;
 
-        const musicCards = doc.querySelectorAll(".col-md-6.col-lg-4.mb-4");
-        const extractedMusics = Array.from(musicCards)
-          .map((card, index) => {
-            try {
-              const button = card.querySelector("button[data-music]");
-              const musicUrl = button?.getAttribute("data-music");
-              const title = card.querySelector("h6.mb-0")?.textContent?.trim();
-              const category = card
-                .querySelector(".text-gray")
-                ?.textContent?.trim();
+        // Try each proxy service until one works
+        for (let proxyUrl of proxyServices) {
+          try {
+            console.log(`Trying proxy: ${proxyUrl}`);
+            const proxyResponse = await fetch(
+              `${proxyUrl}${encodeURIComponent(BASE_URL)}`,
+              {
+                headers: {
+                  Origin: "https://momenic.vercel.app",
+                },
+                timeout: 10000, // 10 seconds timeout
+              }
+            );
 
-              if (!title || !musicUrl) return null;
-
-              return {
-                id: index + 1,
-                title,
-                category: category || "Wedding",
-                musicUrl: musicUrl.startsWith("http")
-                  ? musicUrl
-                  : `${BASE_URL}${musicUrl}`,
-              };
-            } catch (cardError) {
-              console.error(`Error processing card ${index}:`, cardError);
-              return null;
+            if (proxyResponse.ok) {
+              html = await proxyResponse.text();
+              proxySuccess = true;
+              console.log(`Proxy ${proxyUrl} succeeded`);
+              break;
             }
-          })
-          .filter(Boolean);
+          } catch (proxyErr) {
+            console.error(`Proxy ${proxyUrl} failed:`, proxyErr);
+          }
+        }
+
+        if (!proxySuccess) {
+          throw new Error("All proxy services failed");
+        }
+
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+
+        // Find all music elements - try several selector patterns
+        const musicElements = [
+          ...tempDiv.querySelectorAll(".d-flex"),
+          ...tempDiv.querySelectorAll(".card"),
+          ...tempDiv.querySelectorAll(".music-item"),
+        ];
+
+        console.log("Found music elements:", musicElements.length);
+
+        // Extract music data
+        const extractedMusics = [];
+        let id = 1;
+
+        musicElements.forEach((element) => {
+          try {
+            // Look for button with data-music attribute
+            const button = element.querySelector("[data-music]");
+            if (!button) return;
+
+            const musicUrl = button.getAttribute("data-music");
+            if (!musicUrl) return;
+
+            // Try different selectors for title
+            let title;
+            const titleElement =
+              element.querySelector("h6.mb-0") ||
+              element.querySelector("h6") ||
+              element.querySelector(".title");
+
+            if (titleElement) {
+              title = titleElement.textContent.trim();
+            }
+
+            // Try different selectors for category
+            let category = "Wedding"; // Default category
+            const categoryElement =
+              element.querySelector(".text-gray") ||
+              element.querySelector("small") ||
+              element.querySelector(".category");
+
+            if (categoryElement) {
+              category = categoryElement.textContent.trim();
+            }
+
+            if (title && musicUrl) {
+              extractedMusics.push({
+                id: id++,
+                title,
+                category,
+                musicUrl,
+              });
+            }
+          } catch (err) {
+            console.error("Error processing music element:", err);
+          }
+        });
+
+        console.log("Extracted musics:", extractedMusics.length);
 
         if (extractedMusics.length > 0) {
           localStorage.setItem(
@@ -83,10 +148,42 @@ const useMusic = () => {
 
           setMusics(extractedMusics);
           setError(null);
+        } else {
+          // Try direct HTML string search as fallback
+          try {
+            const musicUrlPattern = /data-music="([^"]+)"/g;
+            const musicMatches = [...html.matchAll(musicUrlPattern)];
+
+            if (musicMatches.length > 0) {
+              console.log("Found music URLs via regex:", musicMatches.length);
+
+              const fallbackMusics = musicMatches.map((match, index) => ({
+                id: index + 1,
+                title: `Music Track ${index + 1}`,
+                category: "Wedding",
+                musicUrl: match[1],
+              }));
+
+              localStorage.setItem(
+                CACHE_KEY,
+                JSON.stringify({
+                  data: fallbackMusics,
+                  timestamp: Date.now(),
+                })
+              );
+
+              setMusics(fallbackMusics);
+              setError(null);
+            } else {
+              throw new Error("No music elements found");
+            }
+          } catch (fallbackErr) {
+            setError("Tidak bisa mengambil data musik dari server");
+          }
         }
       } catch (err) {
         console.error("Failed to fetch music:", err);
-        setError("Gagal memuat musik");
+        setError("Gagal memuat musik: " + err.message);
 
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
@@ -99,9 +196,7 @@ const useMusic = () => {
       }
     };
 
-    if (!musics.length) {
-      fetchMusics();
-    }
+    fetchMusics();
   }, []);
 
   const filteredMusics = useCallback(
