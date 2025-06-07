@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useMusic from "../../hooks/useMusic";
-import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import Search from "../../components/Search";
 import Pagination from "../../components/Pagination";
 
@@ -16,12 +16,7 @@ function Music() {
     setSearch,
   } = useMusic();
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
-  const [countdown, setCountdown] = useState(25);
-
-  // Add handleSearch function
-  const handleSearch = (value) => {
-    setSearch(value);
-  };
+  const [countdown, setCountdown] = useState(15);
 
   // Cleanup audio on unmount
   useEffect(() => {
@@ -31,58 +26,62 @@ function Music() {
         currentlyPlaying.audio = null;
       }
     };
-  }, []);
+  }, [currentlyPlaying]);
 
-  // Add countdown effect
+  // Countdown timer for loading state
   useEffect(() => {
-    let timer;
-    if (loading && countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    }
+    if (!loading || countdown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
     return () => clearInterval(timer);
   }, [loading, countdown]);
 
   const handlePlay = (musicUrl, id) => {
+    // Pause current audio if playing
     if (currentlyPlaying?.audio) {
       currentlyPlaying.audio.pause();
     }
 
+    // Toggle off if clicking the same track
     if (currentlyPlaying?.id === id) {
       setCurrentlyPlaying(null);
       return;
     }
 
+    // Play the new track
     const audio = new Audio(musicUrl);
-    // Add event listeners for better performance
-    audio.addEventListener("ended", () => {
-      setCurrentlyPlaying(null);
-    });
-    audio.addEventListener("error", () => {
+    audio.addEventListener("ended", () => setCurrentlyPlaying(null));
+    audio.addEventListener("error", () => setCurrentlyPlaying(null));
+
+    audio.play().catch((err) => {
+      console.error("Failed to play audio:", err);
       setCurrentlyPlaying(null);
     });
 
-    audio.play();
     setCurrentlyPlaying({ id, audio });
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="py-20 sm:py-28 my-16">
         <div className="container mx-auto max-w-5xl px-4">
           <div className="text-center mb-8">
-            <p className="text-[#3F4D34] font-secondary text-lg mb-2">
-              Mohon maaf atas ketidaknyamanannya
-            </p>
-            <p className="text-[#3F4D34]/80 font-secondary mb-4">
-              Sistem sedang mempersiapkan daftar musik untuk Anda
-            </p>
-            <p className="text-[#3F4D34]/60 font-secondary text-sm">
-              Estimasi waktu tunggu: {countdown} detik
-            </p>
+            <h2 className="font-primary text-2xl text-[#3F4D34] mb-3">
+              Menyiapkan koleksi musik...
+            </h2>
+            {countdown > 0 && (
+              <p className="text-[#3F4D34]/60 font-secondary text-sm">
+                Mohon tunggu {countdown} detik
+              </p>
+            )}
           </div>
-          <div className="space-y-4">
+
+          {/* Skeleton loading */}
+          <div className="space-y-3">
             {[...Array(6)].map((_, index) => (
               <div
                 key={index}
@@ -103,6 +102,7 @@ function Music() {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="py-20 sm:py-28 my-16">
@@ -115,29 +115,29 @@ function Music() {
 
   return (
     <div className="py-20 sm:py-28 my-16">
-      {/* Hero Section */}
-      <div className="relative mb-16 px-4">
+      {/* Header */}
+      <div className="relative mb-12 px-4">
         <div className="container mx-auto max-w-5xl text-center">
-          <h1 className="font-primary text-3xl sm:text-4xl md:text-5xl text-[#3F4D34] mb-6">
+          <h1 className="font-primary text-3xl sm:text-4xl md:text-5xl text-[#3F4D34] mb-4">
             Pilihan Musik
           </h1>
           <p className="font-secondary text-[#3F4D34]/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed mb-8">
-            Koleksi musik untuk undangan digital Anda
+            Koleksi musik untuk menyempurnakan undangan digital Anda
           </p>
 
-          {/* Update Search component usage */}
           <Search
-            onSearch={handleSearch}
+            onSearch={setSearch}
             placeholder="Cari musik..."
             debounceTime={300}
+            value={search}
           />
         </div>
       </div>
 
-      {/* Add Empty State Message */}
+      {/* Empty state */}
       {musics.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#3F4D34]/80 font-secondary text-lg mb-4">
+        <div className="text-center py-10">
+          <p className="text-[#3F4D34]/80 font-secondary text-lg">
             {search
               ? `Tidak ada musik yang cocok dengan pencarian "${search}"`
               : "Tidak ada musik tersedia saat ini"}
@@ -149,11 +149,11 @@ function Music() {
       {musics.length > 0 && (
         <div className="px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="space-y-3">
+            <div className="space-y-3 mb-8">
               {musics.map((item) => (
                 <div
                   key={item.id}
-                  className="group bg-white hover:bg-gray-50 p-4  transition-all duration-200"
+                  className="group bg-white hover:bg-gray-50 p-4 transition-all duration-200"
                 >
                   <div className="flex items-center space-x-4">
                     <button
@@ -164,6 +164,9 @@ function Music() {
                           ? "bg-[#3F4D34] text-white"
                           : "bg-[#3F4D34]/10 text-[#3F4D34] group-hover:bg-[#3F4D34] group-hover:text-white"
                       }`}
+                      aria-label={
+                        currentlyPlaying?.id === item.id ? "Pause" : "Play"
+                      }
                     >
                       {currentlyPlaying?.id === item.id ? (
                         <Pause className="h-5 w-5" />
@@ -182,8 +185,8 @@ function Music() {
                     <div className="flex-shrink-0 hidden sm:block">
                       <span className="text-sm text-gray-500 font-secondary">
                         {currentlyPlaying?.id === item.id
-                          ? "Now Playing"
-                          : "Click to Play"}
+                          ? "Sedang diputar"
+                          : "Klik untuk memainkan"}
                       </span>
                     </div>
                   </div>
@@ -191,11 +194,13 @@ function Music() {
               ))}
             </div>
 
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
-            />
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            )}
           </div>
         </div>
       )}
