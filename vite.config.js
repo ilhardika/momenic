@@ -6,5 +6,16 @@ export default defineConfig({
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  base: "/", // Ubah dari './' ke '/' untuk root directory
+  base: "/", // Keep as root path
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    emptyOutDir: true,
+    // Copy the .htaccess file to the build directory
+    rollupOptions: {
+      input: {
+        main: "index.html",
+      },
+    },
+  },
 });
