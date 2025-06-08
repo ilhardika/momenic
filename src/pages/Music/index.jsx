@@ -182,13 +182,17 @@ function Music() {
                         {item.category}
                       </p>
                     </div>
-                    <div className="flex-shrink-0 hidden sm:block">
-                      <span className="text-sm text-gray-500 font-secondary">
-                        {currentlyPlaying?.id === item.id
-                          ? "Sedang diputar"
-                          : "Klik untuk memainkan"}
-                      </span>
-                    </div>
+
+                    {/* Add download button */}
+                    <a
+                      href={item.musicUrl}
+                      download={`${item.title}.mp3`}
+                      className="text-sm text-[#3F4D34] hover:text-[#3F4D34]/80 font-secondary mr-4"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Download
+                    </a>
                   </div>
                 </div>
               ))}
