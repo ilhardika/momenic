@@ -648,6 +648,78 @@
     "preview": "https://the.invisimple.id/m27-tf/?to=Tamu+Undangan"
   },
   {
+    "ID": 461,
+    "name": "3D Motion 28",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-m28.jpg",
+    "preview": "https://the.invisimple.id/m28/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 462,
+    "name": "3D Motion 28 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-m28-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/m28-tf/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 465,
+    "name": "3D Motion 29",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-m29.jpg",
+    "preview": "https://the.invisimple.id/m29/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 466,
+    "name": "3D Motion 29 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-m29-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/m29-tf/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 469,
+    "name": "3D Motion 30",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/08/preview-m30.jpg",
+    "preview": "https://the.invisimple.id/m30/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 470,
+    "name": "3D Motion 30 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/08/preview-m30-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/m30-tf/?to=Tamu+Undangan"
+  },
+  {
     "ID": 11,
     "name": "Aqiqah 01",
     "category_name": "Aqiqah",
@@ -1342,6 +1414,78 @@
     "taxonomy": "template-pernikahan",
     "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/05/preview-art27-tanpa-foto.jpg",
     "preview": "https://the.invisimple.id/art27-tf/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 463,
+    "name": "Art 28",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-art28.jpg",
+    "preview": "https://the.invisimple.id/art28/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 464,
+    "name": "Art 28 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-art28-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/art28-tf/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 467,
+    "name": "Art 29",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-art29.jpg",
+    "preview": "https://the.invisimple.id/art29/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 468,
+    "name": "Art 29 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/06/preview-art29-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/art29-tf/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 471,
+    "name": "Art 30",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/08/preview-art30.jpg",
+    "preview": "https://the.invisimple.id/art30/?to=Tamu+Undangan"
+  },
+  {
+    "ID": 472,
+    "name": "Art 30 (Tanpa Foto)",
+    "category_name": "Pernikahan",
+    "category": {
+      "id": 1,
+      "title": "Pernikahan"
+    },
+    "taxonomy": "template-pernikahan",
+    "thumbnail": "https://the.invisimple.id/wp-content/uploads/2025/08/preview-art30-tanpa-foto.jpg",
+    "preview": "https://the.invisimple.id/art30-tf/?to=Tamu+Undangan"
   },
   {
     "ID": 9,
