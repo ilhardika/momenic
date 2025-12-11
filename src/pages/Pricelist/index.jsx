@@ -23,37 +23,9 @@ function Pricelist() {
     return percentage;
   };
 
-  // Translate time periods to Indonesian
-  const translateTimePeriod = (period) => {
-    if (!period) return "";
-
-    // Replace common English time periods with Indonesian
-    return period
-      .replace("14 months", "14 bulan")
-      .replace("1 year", "1 tahun")
-      .replace("Lifetime", "Selamanya")
-      .replace("6 months", "6 bulan")
-      .replace("3 months", "3 bulan")
-      .replace("month", "bulan")
-      .replace("year", "tahun")
-      .replace("forever", "selamanya");
-  };
-
   // Key differentiating features only
   const getDifferentiatingFeatures = (item) => {
     const features = [];
-
-    // Add active period - with translated period
-    if (item.details?.activePeriod) {
-      features.push(
-        `Aktif selama ${translateTimePeriod(item.details.activePeriod)}`
-      );
-    }
-
-    // Add photo gallery info when "Dengan Foto" is selected
-    if (withPhoto && item.details?.maxGalleryPhotos) {
-      features.push(`${item.details.maxGalleryPhotos} foto gallery`);
-    }
 
     // Always add "Tanpa Foto" as a feature when that option is selected
     if (!withPhoto) {

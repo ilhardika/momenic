@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Eye, MessageCircle, Search as SearchIcon } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Search from "../../../components/Search";
-import themeData from "../../../data/theme.json";
+import useTheme from "../../../hooks/useTheme";
 import pricelist from "../../../data/pricelist.json";
 
 const ThemeList = () => {
@@ -14,88 +14,108 @@ const ThemeList = () => {
   const initialPhotoValue = searchParams.get("withphoto") !== "false"; // true by default unless explicitly set to false
   const initialSearchQuery = searchParams.get("search") || "";
 
-  const [themes, setThemes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [withPhoto, setWithPhoto] = useState(initialPhotoValue);
   const [itemsToShow, setItemsToShow] = useState(12);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Process theme data on component mount
-  useEffect(() => {
-    // Simulate loading delay for better UX
-    const timer = setTimeout(() => {
-      // Transform the data directly without the complex processing
-      const transformedThemes = themeData.map((theme, index) => {
-        const id = theme.ID || `theme-${index}`;
-        const previewUrl = theme.preview || "";
+  // Use the custom theme hook
+  const {
+    rawThemes, // Now using the correct unfiltered themes
+    loading,
+    error,
+    selectedCategory,
+    setSelectedCategory,
+    withPhoto,
+    setWithPhoto,
+    categories,
+    refetch,
+  } = useTheme();
 
-        // Transform the URL from the.invisimple.id to momenic.invisimple.id
-        const modifiedPreviewUrl = previewUrl.replace(
-          "the.invisimple.id",
-          "momenic.invisimple.id"
-        );
+  // Transform and process themes from API
+  const themes = useMemo(() => {
+    return rawThemes.map((theme) => {
+      const name = theme.name || "";
+      const previewUrl = theme.demoUrl || "";
 
-        // Extract theme type for categorization
-        const name = theme.name || "";
-        let themeType = "3D Motion";
+      // Transform the URL from the.invisimple.id to momenic.invisimple.id
+      const modifiedPreviewUrl = previewUrl.replace(
+        "the.invisimple.id",
+        "momenic.invisimple.id"
+      );
 
-        if (name.startsWith("3D Motion")) {
-          themeType = "3D Motion";
-        } else if (name.startsWith("Art")) {
-          themeType = "Art";
-        } else if (name.startsWith("Luxury")) {
-          themeType = "Luxury";
-        } else if (name.startsWith("Special")) {
-          themeType = "Special";
-        } else if (name.startsWith("Aqiqah")) {
-          themeType = "Aqiqah";
-        } else if (name.startsWith("Khitan")) {
-          themeType = "Khitan";
-        }
+      // Extract theme type for categorization
+      let themeType = theme.category || "3D Motion";
 
-        // Determine if it has photo or not
-        const hasPhoto = !name.includes("(Tanpa Foto)");
-
-        return {
-          id,
-          name,
-          featured_image:
-            theme.thumbnail ||
-            `https://via.placeholder.com/600x600?text=${name.replace(
-              /\s+/g,
-              "+"
-            )}`,
-          preview_url: modifiedPreviewUrl,
-          category_id: theme.category?.id?.toString() || "1",
-          category_name: theme.category?.title || "Pernikahan",
-          category_type: theme.category?.type || "Tema general",
-          theme_type: themeType,
-          has_photo: hasPhoto,
-          slug: name.toLowerCase().replace(/\s+/g, "").replace(/[()]/g, ""),
-        };
-      });
-
-      setThemes(transformedThemes);
-      setLoading(false);
-
-      // If there's a name parameter, find and select the specific theme
-      const nameParam = searchParams.get("name");
-      if (nameParam) {
-        const matchedTheme = transformedThemes.find(
-          (theme) => theme.slug === nameParam.toLowerCase()
-        );
-
-        if (matchedTheme) {
-          setSelectedCategory(matchedTheme.theme_type);
-          setWithPhoto(matchedTheme.has_photo);
-        }
+      if (name.startsWith("3D Motion")) {
+        themeType = "3D Motion";
+      } else if (name.startsWith("Art")) {
+        themeType = "Art";
+      } else if (name.startsWith("Luxury")) {
+        themeType = "Luxury";
+      } else if (name.startsWith("Special")) {
+        themeType = "Special";
+      } else if (name.startsWith("Aqiqah")) {
+        themeType = "Aqiqah";
+      } else if (name.startsWith("Khitan")) {
+        themeType = "Khitan";
       }
-    }, 800);
 
-    return () => clearTimeout(timer);
-  }, [searchParams]);
+      // Determine if it has photo or not
+      const hasPhoto =
+        theme.withPhoto !== false && !name.includes("(Tanpa Foto)");
+
+      return {
+        id: theme.id,
+        name,
+        featured_image:
+          theme.image ||
+          `https://via.placeholder.com/600x600?text=${name.replace(
+            /\s+/g,
+            "+"
+          )}`,
+        preview_url: modifiedPreviewUrl,
+        category_id: theme.id?.toString() || "1",
+        category_name: theme.category || "Pernikahan",
+        category_type: theme.category || "Tema general",
+        theme_type: themeType,
+        has_photo: hasPhoto,
+        slug: name.toLowerCase().replace(/\s+/g, "").replace(/[()]/g, ""),
+        description: theme.description || "",
+      };
+    });
+  }, [rawThemes]);
+
+  // Initialize category from URL param and ensure default category is always in URL
+  useEffect(() => {
+    const urlCategory = searchParams.get("category");
+    const urlWithPhoto = searchParams.get("withphoto");
+
+    // If no category in URL, redirect to default category
+    if (!urlCategory) {
+      const params = new URLSearchParams();
+      params.set("category", "3D Motion");
+      params.set("withphoto", urlWithPhoto || "true");
+      navigate(`/tema?${params.toString()}`, { replace: true });
+    } else {
+      // Sync selectedCategory with URL category
+      setSelectedCategory(urlCategory);
+    }
+  }, [searchParams, setSelectedCategory, navigate]);
+
+  // If there's a name parameter, find and select the specific theme
+  useEffect(() => {
+    const nameParam = searchParams.get("name");
+    if (nameParam && themes.length > 0) {
+      const matchedTheme = themes.find(
+        (theme) => theme.slug === nameParam.toLowerCase()
+      );
+
+      if (matchedTheme) {
+        setSelectedCategory(matchedTheme.theme_type);
+        setWithPhoto(matchedTheme.has_photo);
+      }
+    }
+  }, [searchParams, themes, setSelectedCategory, setWithPhoto]);
 
   // Define theme types in the specific order requested
   const themeTypes = useMemo(() => {
@@ -170,7 +190,9 @@ const ThemeList = () => {
       params.set("category", selectedCategory);
     }
 
-    params.set("withphoto", withPhoto.toString());
+    if (withPhoto !== null) {
+      params.set("withphoto", withPhoto.toString());
+    }
 
     if (searchQuery) {
       params.set("search", searchQuery);
@@ -281,6 +303,45 @@ const ThemeList = () => {
                 <div className="h-4 w-1/2 mx-auto rounded-full bg-gray-200 animate-pulse"></div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="px-4 py-8">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center py-16 bg-red-50 rounded-2xl border border-red-200">
+            <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-red-200 text-red-600 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <p className="text-red-800 font-secondary text-lg mb-2">
+              Gagal Memuat Tema
+            </p>
+            <p className="text-red-600 text-sm max-w-md mx-auto mb-4">
+              {error}
+            </p>
+            <button
+              onClick={refetch}
+              className="px-6 py-2 bg-red-600 text-white rounded-full font-secondary hover:bg-red-700 transition-colors"
+            >
+              Coba Lagi
+            </button>
           </div>
         </div>
       </section>

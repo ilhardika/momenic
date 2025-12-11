@@ -151,14 +151,20 @@ function Music() {
           <div className="container mx-auto max-w-5xl">
             <div className="space-y-3 mb-8">
               {musics.map((item) => (
-                <div
+                <a
                   key={item.id}
-                  className="group bg-white hover:bg-gray-50 p-4 transition-all duration-200"
+                  href={item.musicUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-white hover:bg-gray-50 p-4 transition-all duration-200 block"
                 >
                   <div className="flex items-center space-x-4">
                     <button
                       type="button"
-                      onClick={() => handlePlay(item.musicUrl, item.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePlay(item.musicUrl, item.id);
+                      }}
                       className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full transition-colors duration-200 ${
                         currentlyPlaying?.id === item.id
                           ? "bg-[#3F4D34] text-white"
@@ -182,19 +188,8 @@ function Music() {
                         {item.category}
                       </p>
                     </div>
-
-                    {/* Add download button */}
-                    <a
-                      href={item.musicUrl}
-                      download={`${item.title}.mp3`}
-                      className="text-sm text-[#3F4D34] hover:text-[#3F4D34]/80 font-secondary mr-4"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download
-                    </a>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
 

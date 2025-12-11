@@ -35,7 +35,6 @@ const useMusic = () => {
 
     // Find all music elements - focus on .d-flex which seems to work
     const musicElements = tempDiv.querySelectorAll(".d-flex");
-    console.log("Found music elements:", musicElements.length);
 
     // Extract music data
     const extractedMusics = [];
@@ -108,7 +107,6 @@ const useMusic = () => {
 
         // Try the preferred proxy first
         try {
-          console.log(`Using preferred proxy: ${PREFERRED_PROXY}`);
           const proxyResponse = await fetch(
             `${PREFERRED_PROXY}${encodeURIComponent(BASE_URL)}`,
             {
@@ -121,8 +119,6 @@ const useMusic = () => {
           if (proxyResponse.ok) {
             const html = await proxyResponse.text();
             const extractedMusics = extractMusicData(html);
-
-            console.log("Extracted musics:", extractedMusics.length);
 
             if (extractedMusics.length > 0) {
               // Store in cache
@@ -155,7 +151,6 @@ const useMusic = () => {
 
         for (let proxyUrl of fallbackProxies) {
           try {
-            console.log(`Trying fallback proxy: ${proxyUrl}`);
             const proxyResponse = await fetch(
               `${proxyUrl}${encodeURIComponent(BASE_URL)}`,
               {
@@ -169,7 +164,6 @@ const useMusic = () => {
             if (proxyResponse.ok) {
               html = await proxyResponse.text();
               proxySuccess = true;
-              console.log(`Fallback proxy ${proxyUrl} succeeded`);
               break;
             }
           } catch (proxyErr) {
@@ -182,7 +176,6 @@ const useMusic = () => {
         }
 
         const extractedMusics = extractMusicData(html);
-        console.log("Extracted musics from fallback:", extractedMusics.length);
 
         if (extractedMusics.length > 0) {
           localStorage.setItem(
@@ -203,8 +196,6 @@ const useMusic = () => {
           const titleMatches = [...html.matchAll(titlePattern)];
 
           if (musicMatches.length > 0) {
-            console.log("Found music URLs via regex:", musicMatches.length);
-
             const fallbackMusics = musicMatches.map((match, index) => ({
               id: index + 1,
               title: titleMatches[index]

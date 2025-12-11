@@ -1,0 +1,207 @@
+import { useState, useEffect, useCallback } from "react";
+
+// Use proxy in development, direct URL in production
+const API_URL = import.meta.env.DEV
+  ? "/api/wp-admin/admin-ajax.php"
+  : "https://the.invisimple.id/wp-admin/admin-ajax.php";
+const CACHE_KEY = "theme-data";
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const PER_PAGE = 12;
+
+// IMPORTANT: Nonce perlu di-update secara berkala (expired setelah 12-24 jam)
+// Untuk mendapatkan nonce yang valid:
+// 1. Login ke https://the.invisimple.id
+// 2. Buka dashboard/invitation/create
+// 3. Buka DevTools -> Network tab
+// 4. Trigger API call untuk load themes
+// 5. Copy value __nonce dari request payload
+const NONCE = "99c3362c49"; // Update this with valid nonce
+
+const useTheme = () => {
+  const [themes, setThemes] = useState(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_DURATION) {
+          return data;
+        }
+      }
+    } catch (error) {
+      console.error("Error loading cached themes:", error);
+    }
+    return [];
+  });
+
+  const [loading, setLoading] = useState(!themes.length);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [withPhoto, setWithPhoto] = useState(true); // Default to true instead of null
+
+  // Fetch themes from API - ALWAYS fetch all themes, filter client-side
+  const fetchThemes = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const formData = new URLSearchParams({
+        name: "invitation_get_theme",
+        action: "run_wds",
+        __nonce: NONCE,
+        category: "", // Always empty to get all themes
+        subcategory: "",
+        subtheme: "",
+      });
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          Accept: "application/json, text/javascript, */*; q=0.01",
+        },
+        body: formData.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Check for API errors (like nonce verification failed)
+      if (data.success === false) {
+        throw new Error(
+          `API Error: ${data.data || "Unknown error"}. ${
+            data.data?.includes("Nonce")
+              ? "Nonce expired - please update NONCE in useTheme.jsx"
+              : ""
+          }`
+        );
+      }
+
+      // Process the API response based on its structure
+      let processedThemes = [];
+
+      if (data.data && Array.isArray(data.data)) {
+        processedThemes = data.data.map((theme) => ({
+          id: theme.id || theme.ID,
+          name: theme.name || theme.post_title,
+          category: theme.category || theme.term_name || "Uncategorized",
+          image: theme.image || theme.thumbnail || theme.featured_image || "",
+          demoUrl: theme.demo_url || theme.preview_url || "#",
+          withPhoto: theme.with_photo || theme.withPhoto || false,
+          price: theme.price || 0,
+          description: theme.description || theme.post_excerpt || "",
+        }));
+      } else if (Array.isArray(data)) {
+        processedThemes = data.map((theme) => {
+          const themeName = theme.name || theme.post_title || "";
+          // Detect withPhoto dari nama - jika ada "(Tanpa Foto)" maka false
+          const hasPhoto = !themeName.includes("(Tanpa Foto)");
+
+          return {
+            id: theme.id || theme.ID,
+            name: themeName,
+            category:
+              typeof theme.category === "object"
+                ? theme.category?.title ||
+                  theme.category?.name ||
+                  "Uncategorized"
+                : theme.category || theme.term_name || "Uncategorized",
+            image: theme.image || theme.thumbnail || theme.featured_image || "",
+            demoUrl:
+              theme.demo_url || theme.preview_url || theme.preview || "#",
+            withPhoto: hasPhoto,
+            price: theme.price || 0,
+            description: theme.description || theme.post_excerpt || "",
+          };
+        });
+      } else {
+        console.warn("Unexpected data structure:", data);
+      }
+
+      // Cache the data
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({
+          data: processedThemes,
+          timestamp: Date.now(),
+        })
+      );
+
+      setThemes(processedThemes);
+    } catch (err) {
+      console.error("Error fetching themes:", err);
+      console.error("Error details:", err.message);
+      setError(err.message);
+
+      // If fetch fails and we have cached data, use it
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setThemes(data);
+          setError("Using cached data - " + err.message);
+        }
+      } catch (cacheError) {
+        console.error("Error loading cached themes:", cacheError);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []); // No dependencies - only fetch once
+
+  useEffect(() => {
+    fetchThemes();
+  }, [fetchThemes]);
+
+  // Filter themes based on withPhoto parameter
+  const filteredThemes = useCallback(() => {
+    let filtered = [...themes];
+
+    // Filter by withPhoto
+    filtered = filtered.filter((theme) => theme.withPhoto === withPhoto);
+
+    return filtered;
+  }, [themes, withPhoto]);
+
+  const displayedThemes = filteredThemes();
+  const totalPages = Math.ceil(displayedThemes.length / PER_PAGE);
+  const paginatedThemes = displayedThemes.slice(
+    (page - 1) * PER_PAGE,
+    page * PER_PAGE
+  );
+
+  // Get unique categories
+  const categories = useCallback(() => {
+    const uniqueCategories = [
+      ...new Set(themes.map((theme) => theme.category)),
+    ];
+    return uniqueCategories.sort();
+  }, [themes]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, withPhoto]);
+
+  return {
+    themes: paginatedThemes,
+    allThemes: displayedThemes,
+    rawThemes: themes, // Add raw unfiltered themes
+    loading,
+    error,
+    page,
+    setPage,
+    totalPages,
+    selectedCategory,
+    setSelectedCategory,
+    withPhoto,
+    setWithPhoto,
+    categories: categories(),
+    refetch: fetchThemes,
+  };
+};
+
+export default useTheme;

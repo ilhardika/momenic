@@ -41,7 +41,7 @@ function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
           <Link
-            to="/tema"
+            to="/tema?category=3D+Motion&withphoto=true"
             className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
           >
             Katalog
@@ -84,7 +84,7 @@ function Navbar() {
         >
           <div className="flex flex-col pt-24 px-6 space-y-6">
             <Link
-              to="/tema"
+              to="/tema?category=3D+Motion&withphoto=true"
               className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
               onClick={() => setIsOpen(false)}
             >

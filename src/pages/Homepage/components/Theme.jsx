@@ -1,15 +1,84 @@
 import { useState, useEffect, useMemo } from "react";
 import { Eye, MessageCircle } from "lucide-react";
-import themeData from "../../../data/theme.json";
+import { Link } from "react-router-dom";
+import useTheme from "../../../hooks/useTheme";
 import pricelist from "../../../data/pricelist.json";
 
 const Theme = () => {
-  const [themes, setThemes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("3D Motion"); // Default to 3D Motion
-  const [withPhoto, setWithPhoto] = useState(true); // Changed from selectedPhotoOption to match Pricelist
   const [itemsToShow, setItemsToShow] = useState(6); // Show 6 items by default
   const [loadingMore, setLoadingMore] = useState(false);
+
+  // Use the custom theme hook
+  const {
+    rawThemes,
+    loading,
+    error,
+    selectedCategory,
+    setSelectedCategory,
+    withPhoto,
+    setWithPhoto,
+  } = useTheme();
+
+  // Transform and process themes from API
+  const themes = useMemo(() => {
+    return rawThemes.map((theme) => {
+      const name = theme.name || "";
+      const previewUrl = theme.demoUrl || "";
+
+      // Transform the URL from the.invisimple.id to momenic.invisimple.id
+      const modifiedPreviewUrl = previewUrl.replace(
+        "the.invisimple.id",
+        "momenic.invisimple.id"
+      );
+
+      // Extract theme type for categorization
+      let themeType = theme.category || "3D Motion";
+
+      if (name.startsWith("3D Motion")) {
+        themeType = "3D Motion";
+      } else if (name.startsWith("Art")) {
+        themeType = "Art";
+      } else if (name.startsWith("Luxury")) {
+        themeType = "Luxury";
+      } else if (name.startsWith("Special")) {
+        themeType = "Special";
+      } else if (name.startsWith("Aqiqah")) {
+        themeType = "Aqiqah";
+      } else if (name.startsWith("Khitan")) {
+        themeType = "Khitan";
+      }
+
+      // Determine if it has photo or not
+      const hasPhoto =
+        theme.withPhoto !== false && !name.includes("(Tanpa Foto)");
+
+      return {
+        id: theme.id,
+        name,
+        featured_image:
+          theme.image ||
+          `https://via.placeholder.com/600x600?text=${name.replace(
+            /\s+/g,
+            "+"
+          )}`,
+        preview_url: modifiedPreviewUrl,
+        category_id: theme.id?.toString() || "1",
+        category_name: theme.category || "Pernikahan",
+        category_type: theme.category || "Tema general",
+        theme_type: themeType,
+        has_photo: hasPhoto,
+        slug: name.toLowerCase().replace(/\s+/g, "").replace(/[()]/g, ""),
+        description: theme.description || "",
+      };
+    });
+  }, [rawThemes]);
+
+  // Set default category to "3D Motion" on initial load
+  useEffect(() => {
+    if (themes.length > 0 && !selectedCategory) {
+      setSelectedCategory("3D Motion");
+    }
+  }, [themes, selectedCategory, setSelectedCategory]);
 
   // For text animation only - now using Wedding, Khitan, Aqiqah
   const [animatedCategory, setAnimatedCategory] = useState("Wedding");
@@ -33,68 +102,6 @@ const Theme = () => {
 
     return () => clearInterval(timer);
   });
-
-  // Process theme data on component mount
-  useEffect(() => {
-    // Simulate loading delay for better UX
-    const timer = setTimeout(() => {
-      // Transform the data directly without the complex processing
-      const transformedThemes = themeData.map((theme, index) => {
-        const id = theme.ID || `theme-${index}`;
-        const previewUrl = theme.preview || "";
-
-        // Transform the URL from the.invisimple.id to momenic.invisimple.id
-        const modifiedPreviewUrl = previewUrl.replace(
-          "the.invisimple.id",
-          "momenic.invisimple.id"
-        );
-
-        // Extract theme type for categorization
-        const name = theme.name || "";
-        let themeType = "3D Motion";
-
-        if (name.startsWith("3D Motion")) {
-          themeType = "3D Motion";
-        } else if (name.startsWith("Art")) {
-          themeType = "Art";
-        } else if (name.startsWith("Luxury")) {
-          themeType = "Luxury";
-        } else if (name.startsWith("Special")) {
-          themeType = "Special";
-        } else if (name.startsWith("Aqiqah")) {
-          themeType = "Aqiqah";
-        } else if (name.startsWith("Khitan")) {
-          themeType = "Khitan";
-        }
-
-        // Determine if it has photo or not
-        const hasPhoto = !name.includes("(Tanpa Foto)");
-
-        return {
-          id,
-          name,
-          featured_image:
-            theme.thumbnail ||
-            `https://via.placeholder.com/600x600?text=${name.replace(
-              /\s+/g,
-              "+"
-            )}`,
-          preview_url: modifiedPreviewUrl,
-          category_id: theme.category?.id?.toString() || "1",
-          category_name: theme.category?.title || "Pernikahan",
-          category_type: theme.category?.type || "Tema general",
-          theme_type: themeType,
-          has_photo: hasPhoto,
-          slug: name.toLowerCase().replace(/\s+/g, "").replace(/[()]/g, ""),
-        };
-      });
-
-      setThemes(transformedThemes);
-      setLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // Define theme types in the specific order requested
   const themeTypes = useMemo(() => {
@@ -365,56 +372,17 @@ const Theme = () => {
               ))}
             </div>
 
-            {/* Load More Button */}
+            {/* View All Button */}
             {hasMoreItems && (
               <div className="mt-12 flex justify-center">
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                  className="px-8 py-3 bg-[#3F4D34] text-white rounded-full font-secondary transition-all duration-300 hover:bg-[#2c3823] focus:outline-none focus:ring-2 focus:ring-[#3F4D34] focus:ring-opacity-50 disabled:opacity-70 shadow-md hover:shadow-lg"
+                <Link
+                  to="/tema?category=3D+Motion&withphoto=true"
+                  className="px-8 py-3 bg-[#3F4D34] text-white rounded-full font-secondary transition-all duration-300 hover:bg-[#2c3823] focus:outline-none focus:ring-2 focus:ring-[#3F4D34] focus:ring-opacity-50 shadow-md hover:shadow-lg inline-flex items-center"
                 >
-                  {loadingMore ? (
-                    <span className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Loading...
-                    </span>
-                  ) : (
-                    <span className="flex items-center  ">
-                      Muat Lebih Banyak
-                      <span className="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
-                        {filteredThemes.length - itemsToShow}
-                      </span>
-                    </span>
-                  )}
-                </button>
+                  <span className="flex items-center">Lihat Semua Tema</span>
+                </Link>
               </div>
             )}
-
-            {/* Results Counter */}
-            <div className="mt-6 text-center text-sm text-gray-500 font-secondary">
-              Menampilkan{" "}
-              <span className="font-medium">{displayedThemes.length}</span> dari{" "}
-              <span className="font-medium">{filteredThemes.length}</span> tema
-            </div>
           </>
         ) : (
           <div className="text-center py-16 bg-gray-50 rounded-2xl">
