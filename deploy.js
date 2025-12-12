@@ -10,7 +10,7 @@ console.log("Preparing build for cPanel deployment...");
 // Copy .htaccess to dist folder
 try {
   fs.copyFileSync(
-    path.resolve(__dirname, ".htaccess"),
+    path.resolve(__dirname, "public", ".htaccess"),
     path.resolve(__dirname, "dist", ".htaccess")
   );
   console.log("✅ .htaccess file copied to dist folder");

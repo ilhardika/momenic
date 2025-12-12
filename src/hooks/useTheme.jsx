@@ -40,6 +40,9 @@ const useTheme = () => {
       setLoading(true);
       setError(null);
 
+      console.log("🔍 [useTheme] Fetching from:", API_URL);
+      console.log("🔍 [useTheme] USE_DIRECT_API:", USE_DIRECT_API);
+
       // Use direct API or proxy based on config
       let response;
 
@@ -78,11 +81,37 @@ const useTheme = () => {
         });
       }
 
+      console.log("📥 [useTheme] Response status:", response.status);
+      console.log("📥 [useTheme] Response headers:", response.headers);
+      console.log(
+        "📥 [useTheme] Content-Type:",
+        response.headers.get("content-type")
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      // Check if response is actually JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error(
+          "❌ [useTheme] Response is not JSON:",
+          text.substring(0, 500)
+        );
+        throw new Error(
+          "API returned HTML instead of JSON. Check .htaccess routing or access /api/themes.php directly"
+        );
+      }
+
       const data = await response.json();
+      console.log("✅ [useTheme] Data received:", {
+        success: data.success,
+        hasData: !!data.data,
+        dataType: Array.isArray(data.data) ? "array" : typeof data.data,
+        dataLength: Array.isArray(data.data) ? data.data.length : "N/A",
+      });
 
       // Check for API errors (like nonce verification failed)
       if (data.success === false) {
@@ -147,7 +176,9 @@ const useTheme = () => {
 
       setThemes(processedThemes);
     } catch (err) {
-      console.error("Error fetching themes:", err);
+      console.error("❌ [useTheme] Error fetching themes:", err);
+      console.error("❌ [useTheme] Error message:", err.message);
+      console.error("❌ [useTheme] Error stack:", err.stack);
       setError(err.message);
 
       // If fetch fails and we have cached data, use it
