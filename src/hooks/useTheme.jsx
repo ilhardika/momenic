@@ -1,21 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 
-// Use proxy in development, direct URL in production
-const API_URL = import.meta.env.DEV
-  ? "/api/wp-admin/admin-ajax.php"
-  : "https://the.invisimple.id/wp-admin/admin-ajax.php";
+// For development: Can use direct API with nonce from env
+// For production: Use API proxy (Vercel serverless or PHP)
+const USE_DIRECT_API = import.meta.env.VITE_USE_DIRECT_API === "true";
+const DIRECT_API_URL = "https://the.invisimple.id/wp-admin/admin-ajax.php";
+const PROXY_API_URL = "/api/themes";
+const API_URL = USE_DIRECT_API ? DIRECT_API_URL : PROXY_API_URL;
+const NONCE = import.meta.env.VITE_INVISIMPLE_NONCE || "";
+
 const CACHE_KEY = "theme-data";
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const PER_PAGE = 12;
-
-// IMPORTANT: Nonce perlu di-update secara berkala (expired setelah 12-24 jam)
-// Untuk mendapatkan nonce yang valid:
-// 1. Login ke https://the.invisimple.id
-// 2. Buka dashboard/invitation/create
-// 3. Buka DevTools -> Network tab
-// 4. Trigger API call untuk load themes
-// 5. Copy value __nonce dari request payload
-const NONCE = "99c3362c49"; // Update this with valid nonce
 
 const useTheme = () => {
   const [themes, setThemes] = useState(() => {
@@ -45,23 +40,43 @@ const useTheme = () => {
       setLoading(true);
       setError(null);
 
-      const formData = new URLSearchParams({
-        name: "invitation_get_theme",
-        action: "run_wds",
-        __nonce: NONCE,
-        category: "", // Always empty to get all themes
-        subcategory: "",
-        subtheme: "",
-      });
+      // Use direct API or proxy based on config
+      let response;
 
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          Accept: "application/json, text/javascript, */*; q=0.01",
-        },
-        body: formData.toString(),
-      });
+      if (USE_DIRECT_API) {
+        // Development: Direct API with form-urlencoded
+        const formData = new URLSearchParams({
+          name: "invitation_get_theme",
+          action: "run_wds",
+          __nonce: NONCE,
+          category: "",
+          subcategory: "",
+          subtheme: "",
+        });
+
+        response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            Accept: "application/json, text/javascript, */*; q=0.01",
+          },
+          body: formData.toString(),
+        });
+      } else {
+        // Production: Use proxy API with JSON
+        response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            category: "",
+            subcategory: "",
+            subtheme: "",
+          }),
+        });
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -71,13 +86,15 @@ const useTheme = () => {
 
       // Check for API errors (like nonce verification failed)
       if (data.success === false) {
-        throw new Error(
-          `API Error: ${data.data || "Unknown error"}. ${
-            data.data?.includes("Nonce")
-              ? "Nonce expired - please update NONCE in useTheme.jsx"
-              : ""
-          }`
-        );
+        const errorMsg = data.error || data.data || "Unknown error";
+        const nonceError =
+          data.needsNonceUpdate ||
+          (errorMsg.includes && errorMsg.includes("Nonce"))
+            ? USE_DIRECT_API
+              ? "Nonce expired - please update VITE_INVISIMPLE_NONCE in .env.local"
+              : "Nonce expired - please update INVISIMPLE_NONCE in your environment variables (Vercel) or api/config.php (cPanel)"
+            : "";
+        throw new Error(`API Error: ${errorMsg}. ${nonceError}`);
       }
 
       // Process the API response based on its structure
@@ -117,8 +134,6 @@ const useTheme = () => {
             description: theme.description || theme.post_excerpt || "",
           };
         });
-      } else {
-        console.warn("Unexpected data structure:", data);
       }
 
       // Cache the data
@@ -133,7 +148,6 @@ const useTheme = () => {
       setThemes(processedThemes);
     } catch (err) {
       console.error("Error fetching themes:", err);
-      console.error("Error details:", err.message);
       setError(err.message);
 
       // If fetch fails and we have cached data, use it

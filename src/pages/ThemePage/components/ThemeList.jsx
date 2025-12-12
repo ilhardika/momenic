@@ -85,6 +85,9 @@ const ThemeList = () => {
     });
   }, [rawThemes]);
 
+  // Add console log after processing themes
+  useEffect(() => {}, [themes]);
+
   // Initialize category from URL param and ensure default category is always in URL
   useEffect(() => {
     const urlCategory = searchParams.get("category");
@@ -151,7 +154,7 @@ const ThemeList = () => {
 
   // Filter themes based on search query, selected category and photo option
   const filteredThemes = useMemo(() => {
-    return themes.filter((theme) => {
+    const filtered = themes.filter((theme) => {
       // Filter by search query (search in both name and category_type)
       const nameMatches = theme.name
         .toLowerCase()
@@ -172,11 +175,15 @@ const ThemeList = () => {
 
       return matchesSearch && matchesCategory && matchesPhotoOption;
     });
+
+    return filtered;
   }, [themes, searchQuery, selectedCategory, withPhoto]);
 
   // Get the subset of themes to display
   const displayedThemes = useMemo(() => {
-    return filteredThemes.slice(0, itemsToShow);
+    const displayed = filteredThemes.slice(0, itemsToShow);
+
+    return displayed;
   }, [filteredThemes, itemsToShow]);
 
   // Check if there are more items to load
