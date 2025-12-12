@@ -16,26 +16,37 @@ async function loginAndGetNonce() {
     throw new Error('INVISIMPLE_EMAIL and INVISIMPLE_PASSWORD must be set');
   }
 
-  // Step 1: Login
-  const loginFormData = new FormData();
-  loginFormData.append('email', email);
-  loginFormData.append('password', password);
-  loginFormData.append('name', 'login');
-  loginFormData.append('action', 'run_wds');
-  loginFormData.append('__nonce', loginNonce);
+  // Step 1: Login with multipart form data
+  const boundary = '----WebKitFormBoundary' + Math.random().toString(36);
+  let body = '';
+  
+  const fields = {
+    email: email,
+    password: password,
+    name: 'login',
+    action: 'run_wds',
+    __nonce: loginNonce,
+  };
+  
+  for (const [name, value] of Object.entries(fields)) {
+    body += `--${boundary}\r\n`;
+    body += `Content-Disposition: form-data; name="${name}"\r\n\r\n`;
+    body += `${value}\r\n`;
+  }
+  body += `--${boundary}--\r\n`;
 
   const loginResponse = await fetch('https://the.invisimple.id/wp-admin/admin-ajax.php', {
     method: 'POST',
-    body: loginFormData,
+    body: body,
     headers: {
+      'Content-Type': `multipart/form-data; boundary=${boundary}`,
       'Accept': '*/*',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     },
-    redirect: 'manual',
   });
 
-  // Extract cookies from login response
-  const setCookieHeaders = loginResponse.headers.raw()['set-cookie'] || [];
+  // Extract cookies from Set-Cookie headers
+  const setCookieHeaders = loginResponse.headers.getSetCookie?.() || [];
   const cookies = setCookieHeaders.map(cookie => cookie.split(';')[0]).join('; ');
 
   if (!cookies) {
