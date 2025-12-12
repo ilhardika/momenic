@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 // For production: Use API proxy (Vercel serverless or PHP)
 const USE_DIRECT_API = import.meta.env.VITE_USE_DIRECT_API === "true";
 const DIRECT_API_URL = "https://the.invisimple.id/wp-admin/admin-ajax.php";
-const PROXY_API_URL = "/api/themes";
+const PROXY_API_URL = "/api/themes.php"; // Direct to PHP file (bypass .htaccess)
 const API_URL = USE_DIRECT_API ? DIRECT_API_URL : PROXY_API_URL;
 const NONCE = import.meta.env.VITE_INVISIMPLE_NONCE || "";
 
