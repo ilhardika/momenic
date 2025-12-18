@@ -41,7 +41,7 @@ if (!defined('INVISIMPLE_EMAIL') || !defined('INVISIMPLE_PASSWORD')) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'Credentials not configured in config.php'
+        'error' => 'Email and password not configured in config.php'
     ]);
     exit();
 }
@@ -51,9 +51,50 @@ $cacheFile = __DIR__ . '/.session_cache';
 $cacheDuration = 60 * 60 * 10; // 10 hours
 
 /**
+ * Get login nonce from login page
+ */
+function getLoginNonce() {
+    $loginPageUrl = 'https://the.invisimple.id/login';
+    
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $loginPageUrl,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_HTTPHEADER => [
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        ],
+    ]);
+    
+    $html = curl_exec($ch);
+    curl_close($ch);
+    
+    // Extract nonce from login page HTML
+    if (preg_match('/__nonce["\'\s:=]+([a-f0-9]{10})/i', $html, $match)) {
+        return $match[1];
+    }
+    
+    // Fallback: try to find any 10-char hex string that looks like a nonce
+    if (preg_match('/nonce["\'\s:=]+([a-f0-9]{10})/i', $html, $match)) {
+        return $match[1];
+    }
+    
+    // If defined in config, use it as fallback
+    if (defined('INVISIMPLE_LOGIN_NONCE')) {
+        return INVISIMPLE_LOGIN_NONCE;
+    }
+    
+    throw new Exception('Could not extract login nonce from login page');
+}
+
+/**
  * Login and get authenticated session
  */
 function loginAndGetSession() {
+    // Get fresh login nonce
+    $loginNonce = getLoginNonce();
+    
     $loginUrl = 'https://the.invisimple.id/wp-admin/admin-ajax.php';
     
     // Prepare multipart form data for login
@@ -65,7 +106,7 @@ function loginAndGetSession() {
         'password' => INVISIMPLE_PASSWORD,
         'name' => 'login',
         'action' => 'run_wds',
-        '__nonce' => INVISIMPLE_LOGIN_NONCE,
+        '__nonce' => $loginNonce,
     ];
     
     foreach ($fields as $name => $value) {
@@ -167,7 +208,31 @@ try {
     $session = getAuthSession();
     
     // Get request body
-    $input = json_decode(file_get_contents('php://input'), true);
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true);
+    
+    // Log for debugging (optional - remove in production)
+    // error_log("Raw input: " . $rawInput);
+    // error_log("Parsed input: " . print_r($input, true));
+    
+    // Handle both JSON and empty body
+    if ($input === null && !empty($rawInput)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Invalid JSON in request body',
+            'debug' => [
+                'json_error' => json_last_error_msg(),
+                'raw_input_length' => strlen($rawInput)
+            ]
+        ]);
+        exit();
+    }
+    
+    // If input is null or empty, use empty array
+    if (!is_array($input)) {
+        $input = [];
+    }
     
     // Build form data
     $postData = http_build_query([
