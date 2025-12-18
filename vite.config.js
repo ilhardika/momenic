@@ -6,16 +6,7 @@ export default defineConfig({
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  base: "/", // Keep as root path
-  server: {
-    proxy: {
-      "/api/themes": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-        rewrite: (path) => path,
-      },
-    },
-  },
+  base: "/",
   build: {
     outDir: "dist",
     assetsDir: "assets",

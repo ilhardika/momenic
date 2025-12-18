@@ -31,15 +31,8 @@ const ThemeList = () => {
     refetch,
   } = useTheme();
 
-  // Transform and process themes from API
+  // Transform and process themes from local JSON
   const themes = useMemo(() => {
-    console.log(
-      "🎨 [ThemeList] Processing themes, rawThemes count:",
-      rawThemes.length
-    );
-    if (rawThemes.length > 0) {
-      console.log("🎨 [ThemeList] Sample rawTheme:", rawThemes[0]);
-    }
     return rawThemes.map((theme) => {
       const name = theme.name || "";
       const previewUrl = theme.demoUrl || "";

@@ -3,13 +3,9 @@
   RewriteEngine On
   RewriteBase /
   
-  # API Endpoint - Handle /api/themes
-  RewriteRule ^api/themes$ api/themes.php [L,QSA]
-  
   # SPA Routing - Redirect all non-file/non-directory requests to index.html
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_URI} !^/api/
   RewriteRule . /index.html [L]
 </IfModule>
 
@@ -19,21 +15,6 @@
   AddType application/json json
   AddType text/css css
 </IfModule>
-
-# Enable CORS for API
-<IfModule mod_headers.c>
-  <FilesMatch "\.(php)$">
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "POST, GET, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type"
-  </FilesMatch>
-</IfModule>
-
-# Security - Protect sensitive files
-<FilesMatch "^(config\.php|\.session_cache)$">
-  Order allow,deny
-  Deny from all
-</FilesMatch>
 
 # Cache static assets
 <IfModule mod_expires.c>

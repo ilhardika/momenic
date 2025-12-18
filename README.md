@@ -17,7 +17,6 @@ A modern React-based web application for creating and managing digital wedding i
 - **Build Tool**: Vite for fast development and optimized production builds
 - **Styling**: Tailwind CSS for responsive design
 - **Icons**: Lucide React for modern UI icons
-- **HTTP Client**: Axios for API requests
 - **Deployment**: Configured for both Vercel and cPanel hosting
 
 ## Project Structure

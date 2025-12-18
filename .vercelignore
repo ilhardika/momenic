@@ -1,11 +1,4 @@
-# Ignore PHP files (only for cPanel deployment)
-api/themes.php
-api/config.php
-api/.session_cache
-
-# Ignore dev server
-dev-server.js
-
 # Ignore local files
+
 .env.local
 node_modules

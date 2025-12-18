@@ -28,7 +28,3 @@ dist-ssr
 .env.local
 .env.production
 .env.development
-
-# API Config (contains sensitive credentials)
-api/config.php
-api/.session_cache

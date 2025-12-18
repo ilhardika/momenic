@@ -19,7 +19,7 @@ const Theme = () => {
     setWithPhoto,
   } = useTheme();
 
-  // Transform and process themes from API
+  // Transform and process themes from local JSON
   const themes = useMemo(() => {
     return rawThemes.map((theme) => {
       const name = theme.name || "";
