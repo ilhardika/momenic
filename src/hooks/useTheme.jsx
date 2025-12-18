@@ -111,6 +111,7 @@ const useTheme = () => {
         hasData: !!data.data,
         dataType: Array.isArray(data.data) ? "array" : typeof data.data,
         dataLength: Array.isArray(data.data) ? data.data.length : "N/A",
+        rawData: data, // Show full response
       });
 
       // Check for API errors (like nonce verification failed)

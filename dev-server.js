@@ -20,9 +20,26 @@ const CACHE_DURATION = 1000 * 60 * 60 * 10; // 10 hours
 // Login credentials from environment
 const EMAIL = process.env.INVISIMPLE_EMAIL || "ilhamhardika48@gmail.com";
 const PASSWORD = process.env.INVISIMPLE_PASSWORD || "@Tuzaqyz5";
-const LOGIN_NONCE = process.env.INVISIMPLE_LOGIN_NONCE || "d6c22f171c";
+
+async function getLoginNonce() {
+  const loginPageUrl = "https://the.invisimple.id/login";
+  const response = await fetch(loginPageUrl);
+  const html = await response.text();
+
+  const nonceMatch = html.match(/__nonce[\s:="']+([a-f0-9]{10})/i);
+  if (nonceMatch) {
+    return nonceMatch[1];
+  }
+
+  // Fallback
+  return process.env.INVISIMPLE_LOGIN_NONCE || "d6c22f171c";
+}
 
 async function loginAndGetNonce() {
+  // Get fresh login nonce from login page
+  const LOGIN_NONCE = await getLoginNonce();
+  console.log("🔑 Using login nonce:", LOGIN_NONCE);
+
   // Step 1: Login with multipart form data
   const boundary = "----WebKitFormBoundary" + Math.random().toString(36);
   let body = "";
@@ -121,6 +138,12 @@ app.post("/api/themes", async (req, res) => {
       subtheme: req.body?.subtheme || "",
     });
 
+    console.log("📤 [dev-server] Request to invisimple:", {
+      url: API_URL,
+      nonce: cachedNonce,
+      formData: formData.toString(),
+    });
+
     // Forward request
     const response = await fetch(API_URL, {
       method: "POST",
@@ -135,7 +158,32 @@ app.post("/api/themes", async (req, res) => {
       body: formData.toString(),
     });
 
+    console.log("📥 [dev-server] Response status:", response.status);
+
     const data = await response.json();
+
+    // Log raw response for debugging
+    console.log(
+      "📦 [dev-server] Raw API Response:",
+      JSON.stringify(data).substring(0, 500)
+    );
+    console.log("📦 [dev-server] Full data keys:", Object.keys(data));
+    console.log("📦 [dev-server] Data.success:", data.success);
+    console.log(
+      "📦 [dev-server] Data.data type:",
+      typeof data.data,
+      Array.isArray(data.data)
+    );
+
+    // If data is directly an array (not wrapped in {data: []})
+    if (Array.isArray(data)) {
+      console.log(
+        "✅ [dev-server] Direct array response:",
+        data.length,
+        "items"
+      );
+      return res.json(data);
+    }
 
     // Check for nonce expired error
     if (

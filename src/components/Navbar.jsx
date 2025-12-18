@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import logo from "../assets/website-icon.png";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +25,7 @@ function Navbar() {
         {/* Logo and Brand */}
         <Link to="/" className="flex items-center space-x-3 z-40">
           <img
-            src="https://assets.satumomen.com/images/media/298604-media-1717688635.png"
+            src={logo}
             alt="Momenic"
             className="w-12 h-12 sm:w-14 sm:h-14"
             width="56"
