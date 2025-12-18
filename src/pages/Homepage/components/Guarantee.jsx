@@ -1,5 +1,6 @@
 import { Clock, CheckCircle } from "lucide-react";
-import guaranteeImage from "../../../assets/guarantee.png";
+import guaranteeImage from "../../../assets/guarantee.webp";
+import guaranteeFallback from "../../../assets/guarantee.png";
 
 function Guarantee() {
   return (
@@ -26,15 +27,19 @@ function Guarantee() {
             <div className="flex flex-col md:flex-row items-center gap-5 md:gap-8">
               {/* Guarantee Image */}
               <div className="w-36 md:w-40 flex-shrink-0">
-                <img
-                  src={guaranteeImage}
-                  alt="Money Back Guarantee"
-                  className="w-full h-auto"
-                />
+                <picture>
+                  <source srcSet={guaranteeImage} type="image/webp" />
+                  <img
+                    src={guaranteeFallback}
+                    alt="Money Back Guarantee"
+                    className="w-full h-auto"
+                    width="252"
+                    height="253"
+                  />
+                </picture>
               </div>
 
               <div>
-
                 {/* Key Points - Bulleted for easy scanning */}
                 <ul className="space-y-2 font-secondary">
                   <li className="flex items-start">

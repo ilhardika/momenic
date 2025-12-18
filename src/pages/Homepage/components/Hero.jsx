@@ -33,6 +33,7 @@ const Hero = () => {
               currentSlide === index ? "opacity-100" : "opacity-0"
             }`}
             style={{ backgroundImage: `url(${image})` }}
+            {...(index === 0 && { fetchpriority: "high" })}
           />
         ))}
 

@@ -27,6 +27,8 @@ function Navbar() {
             src="https://assets.satumomen.com/images/media/298604-media-1717688635.png"
             alt="Momenic"
             className="w-12 h-12 sm:w-14 sm:h-14"
+            width="56"
+            height="56"
           />
           <div className="flex flex-col">
             <span className="text-xl sm:text-2xl font-primary text-[#3F4D34]">
