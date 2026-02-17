@@ -483,8 +483,8 @@ const ThemeList = () => {
                       className="h-full w-full object-cover"
                       loading="lazy"
                       decoding="async"
-                      width="315"
-                      height="315"
+                      width="180"
+                      height="180"
                     />
                   </div>
 

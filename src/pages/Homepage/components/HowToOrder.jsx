@@ -101,12 +101,12 @@ const HowToOrder = () => {
             <h3 className="font-secondary text-2xl sm:text-3xl text-white mb-4">
               Dapatkan Semua Fitur Premium
             </h3>
-            <p className="text-white/80 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
+            <p className="text-white/90 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
               Undangan digital lengkap dengan fitur RSVP, Peta Lokasi, Amplop
               Digital, Gallery Foto & Video, dan masih banyak lagi mulai dari
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-4">
-              <span className="text-white/60 text-base sm:text-lg line-through">
+              <span className="text-white/75 text-base sm:text-lg line-through">
                 Rp 299.000
               </span>
               <span className="text-white text-2xl sm:text-4xl font-bold">

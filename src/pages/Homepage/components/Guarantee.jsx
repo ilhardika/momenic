@@ -30,8 +30,10 @@ function Guarantee() {
                   src={guaranteeImage}
                   alt="Money Back Guarantee"
                   className="w-full h-auto"
-                  width="252"
-                  height="253"
+                  width="300"
+                  height="300"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 

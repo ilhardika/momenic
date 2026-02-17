@@ -30,12 +30,13 @@ function Navbar() {
             className="w-12 h-12 sm:w-14 sm:h-14"
             width="56"
             height="56"
+            loading="eager"
           />
           <div className="flex flex-col">
             <span className="text-xl sm:text-2xl font-primary text-[#3F4D34]">
               Momenic
             </span>
-            <span className="italic text-xs sm:text-sm font-secondary text-[#3F4D34]/70 -mt-1">
+            <span className="italic text-xs sm:text-sm font-secondary text-[#3F4D34]/85 -mt-1">
               Make your special moment iconic
             </span>
           </div>
@@ -67,6 +68,8 @@ function Navbar() {
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden z-50 text-[#3F4D34] hover:text-[#4A5B3E] transition-colors"
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
