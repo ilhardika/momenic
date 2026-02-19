@@ -36,6 +36,8 @@ const Theme = () => {
 
       if (name.startsWith("3D Motion")) {
         themeType = "3D Motion";
+      } else if (name.startsWith("Interaktif")) {
+        themeType = "Interaktif";
       } else if (name.startsWith("Art")) {
         themeType = "Art";
       } else if (name.startsWith("Luxury")) {
@@ -46,8 +48,6 @@ const Theme = () => {
         themeType = "Aqiqah";
       } else if (name.startsWith("Khitan")) {
         themeType = "Khitan";
-      } else if (name.startsWith("Interaktif")) {
-        themeType = "Interaktif";
       }
 
       // Determine if it has photo or not
@@ -110,12 +110,12 @@ const Theme = () => {
     // Fixed order as specified
     const orderedTypes = [
       "3D Motion",
+      "Interaktif",
       "Art",
       "Luxury",
       "Special",
       "Aqiqah",
       "Khitan",
-      "Interaktif",
     ];
 
     // Filter to only include types that actually exist in the data
