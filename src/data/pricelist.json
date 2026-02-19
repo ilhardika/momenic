@@ -14,6 +14,19 @@
       }
     },
     {
+      "theme": "Interaktif",
+      "discountPrice": 199000,
+      "originalPrice": 399000,
+      "withoutPhoto": {
+        "discountPrice": 169000,
+        "originalPrice": 369000
+      },
+      "details": {
+        "unlimitedInvitations": true,
+        "includesAllFeatures": true
+      }
+    },
+    {
       "theme": "Art",
       "discountPrice": 149000,
       "originalPrice": 349000,
@@ -44,15 +57,7 @@
         "originalPrice": 279000
       },
       "details": {
-        "unlimitedInvitations": true,
-        "includesAllFeatures": true
-      }
-    },
-    {
-      "theme": "Khitan",
-      "discountPrice": 149000,
-      "originalPrice": 349000,
-      "details": {
+        "maxGallery": 10,
         "unlimitedInvitations": true,
         "includesAllFeatures": true
       }
@@ -67,11 +72,12 @@
       }
     },
     {
-      "theme": "Without Photo",
+      "theme": "Khitan",
+      "discountPrice": 149000,
+      "originalPrice": 349000,
       "details": {
         "unlimitedInvitations": true,
-        "includesAllFeatures": true,
-        "excludes": ["Photos", "Gallery"]
+        "includesAllFeatures": true
       }
     }
   ]

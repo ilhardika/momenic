@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import HomePage from "./pages/Homepage";
 import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Lazy load non-critical pages
 const ThemePage = lazy(() => import("./pages/ThemePage"));
@@ -11,6 +12,7 @@ const Music = lazy(() => import("./pages/Music"));
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-white">
         <Navbar />
         <Suspense

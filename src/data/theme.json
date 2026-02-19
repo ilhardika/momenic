@@ -2572,7 +2572,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i02.jpg",
         "preview": "https:\/\/the.invisimple.id\/i02-tf\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2600,7 +2600,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i03.jpg",
         "preview": "https:\/\/the.invisimple.id\/i03-tf\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2614,7 +2614,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i04.jpg",
         "preview": "https:\/\/the.invisimple.id\/i04\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2628,6 +2628,90 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i04.jpg",
         "preview": "https:\/\/the.invisimple.id\/i04-tf\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 544,
+        "name": "Interaktif 05",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i05.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i05\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 545,
+        "name": "Interaktif 05 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i05.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i05-tf\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 546,
+        "name": "Interaktif 06",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i06.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i06\/?to=Nama+Tamu",
+        "is_new": true,
+        "is_popular": false
+    },
+    {
+        "ID": 547,
+        "name": "Interaktif 06 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i06.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i06-tf\/?to=Nama+Tamu",
+        "is_new": true,
+        "is_popular": false
+    },
+    {
+        "ID": 548,
+        "name": "Interaktif 07",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i07.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i07\/?to=Nama+Tamu",
+        "is_new": true,
+        "is_popular": false
+    },
+    {
+        "ID": 549,
+        "name": "Interaktif 07 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i07.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i07-tf\/?to=Nama+Tamu",
         "is_new": true,
         "is_popular": false
     },

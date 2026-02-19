@@ -58,6 +58,8 @@ const ThemeList = () => {
         themeType = "Aqiqah";
       } else if (name.startsWith("Khitan")) {
         themeType = "Khitan";
+      } else if (name.startsWith("Interaktif")) {
+        themeType = "Interaktif";
       }
 
       // Determine if it has photo or not
@@ -130,6 +132,7 @@ const ThemeList = () => {
       "Special",
       "Aqiqah",
       "Khitan",
+      "Interaktif",
     ];
 
     // Filter to only include types that actually exist in the data
