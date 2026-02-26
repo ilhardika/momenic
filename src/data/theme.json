@@ -2670,7 +2670,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i06.jpg",
         "preview": "https:\/\/the.invisimple.id\/i06\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2684,7 +2684,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i06.jpg",
         "preview": "https:\/\/the.invisimple.id\/i06-tf\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2698,7 +2698,7 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i07.jpg",
         "preview": "https:\/\/the.invisimple.id\/i07\/?to=Nama+Tamu",
-        "is_new": true,
+        "is_new": false,
         "is_popular": false
     },
     {
@@ -2712,6 +2712,90 @@
         "taxonomy": "template-pernikahan",
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i07.jpg",
         "preview": "https:\/\/the.invisimple.id\/i07-tf\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 550,
+        "name": "Interaktif 08",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i08.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i08\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 551,
+        "name": "Interaktif 08 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i08.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i08-tf\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 552,
+        "name": "Interaktif 09",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i09.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i09\/?to=Nama+Tamu",
+        "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 553,
+        "name": "Interaktif 09 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i09.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i09-tf\/?to=Nama+Tamu",
+        "is_new": true,
+        "is_popular": false
+    },
+    {
+        "ID": 554,
+        "name": "Interaktif 10",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i10.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i10\/?to=Nama+Tamu",
+        "is_new": true,
+        "is_popular": false
+    },
+    {
+        "ID": 555,
+        "name": "Interaktif 10 (Tanpa Foto)",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/preview-i10.jpg",
+        "preview": "https:\/\/the.invisimple.id\/i10-tf\/?to=Nama+Tamu",
         "is_new": true,
         "is_popular": false
     },
@@ -2853,6 +2937,20 @@
         "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2025\/02\/thumbnail-luxury-05.jpg",
         "preview": "https:\/\/the.invisimple.id\/l05-vb\/?to=Tamu+Undangan",
         "is_new": false,
+        "is_popular": false
+    },
+    {
+        "ID": 556,
+        "name": "Luxury 06",
+        "category_name": "Pernikahan",
+        "category": {
+            "id": 1,
+            "title": "Pernikahan"
+        },
+        "taxonomy": "template-pernikahan",
+        "thumbnail": "https:\/\/the.invisimple.id\/wp-content\/uploads\/2026\/02\/thumbnail-luxury-06.jpg",
+        "preview": "https:\/\/the.invisimple.id\/l06-vb\/?to=Tamu+Undangan",
+        "is_new": true,
         "is_popular": false
     },
     {
