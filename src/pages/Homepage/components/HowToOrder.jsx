@@ -112,9 +112,6 @@ const HowToOrder = () => {
               <span className="text-white text-2xl sm:text-4xl font-bold">
                 Rp 79.000
               </span>
-              <span className="text-white/80 text-sm sm:text-base">
-                untuk semua tema
-              </span>
             </div>
             <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
               <Link
