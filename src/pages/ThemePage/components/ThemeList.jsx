@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { Eye, MessageCircle, Search as SearchIcon } from "lucide-react";
+import { Search as SearchIcon } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Search from "../../../components/Search";
+import ThemeCard from "../../../components/ThemeCard";
 import useTheme from "../../../hooks/useTheme";
-import pricelist from "../../../data/pricelist.json";
 
 const ThemeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -245,57 +245,7 @@ const ThemeList = () => {
     setWithPhoto(hasPhoto);
   };
 
-  // Handle direct theme selection
-  const handleThemeSelect = (theme) => {
-    // Create a shareable URL for this specific theme
-    const params = new URLSearchParams();
-    params.set("name", theme.slug);
-    params.set("category", theme.theme_type);
-    params.set("withphoto", theme.has_photo.toString());
-    navigate(`/tema?${params.toString()}`);
-  };
 
-  // New function to get theme price information
-  const getThemePrice = (themeType, hasPhoto) => {
-    const priceInfo = pricelist.pricelist.find(
-      (item) => item.theme === themeType
-    );
-
-    if (!priceInfo) return { discount: 0, original: 0 };
-
-    if (hasPhoto) {
-      return {
-        discount: priceInfo.discountPrice || 0,
-        original: priceInfo.originalPrice || 0,
-      };
-    } else {
-      return {
-        discount: priceInfo.withoutPhoto?.discountPrice || 0,
-        original: priceInfo.withoutPhoto?.originalPrice || 0,
-      };
-    }
-  };
-
-  // Format currency function
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  // Function to create enhanced WhatsApp message with price
-  const createWhatsAppMessage = (theme) => {
-    const price = getThemePrice(theme.theme_type, theme.has_photo);
-
-    const message = `Halo Minmo, saya ingin pesan undangan digital Tema: ${
-      theme.name
-    }, dengan Harga Diskon: ${formatCurrency(price.discount)}`;
-
-    return encodeURIComponent(message);
-  };
 
   if (loading) {
     return (
@@ -359,31 +309,7 @@ const ThemeList = () => {
 
   return (
     <div className="px-4 py-6">
-      {/* Floating Price Badge - Fixed at top of screen */}
-      {selectedCategory && (
-        <div className="fixed top-[80px] left-1/2 transform -translate-x-1/2 z-40">
-          <div className="animate-fadeIn bg-[#3F4D34] text-white px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 whitespace-nowrap">
-            <span className="font-secondary text-xs sm:text-sm">
-              {selectedCategory} {withPhoto ? "Dengan" : "Tanpa"} Foto:
-            </span>
-            <div className="flex items-baseline">
-              {getThemePrice(selectedCategory, withPhoto).original >
-                getThemePrice(selectedCategory, withPhoto).discount && (
-                <span className="text-xs line-through text-white/70 mr-1.5">
-                  {formatCurrency(
-                    getThemePrice(selectedCategory, withPhoto).original
-                  )}
-                </span>
-              )}
-              <span className="text-sm sm:text-base font-semibold">
-                {formatCurrency(
-                  getThemePrice(selectedCategory, withPhoto).discount
-                )}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+
       <div className="container mx-auto max-w-6xl">
         {/* Search and Filters */}
         <div className="mb-10 space-y-6">
@@ -474,70 +400,7 @@ const ThemeList = () => {
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-7">
               {displayedThemes.map((theme) => (
-                <div
-                  key={theme.id}
-                  className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
-                >
-                  <div className="aspect-square overflow-hidden">
-                    <img
-                      src={theme.featured_image}
-                      alt={theme.name}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                      width="180"
-                      height="180"
-                    />
-                  </div>
-
-                  {/* Theme type badge */}
-                  <div className="absolute top-1 left-1 md:top-2.5 md:left-3 lg:top-3 lg:left-4">
-                    <span className="inline-block min-w-20 text-center bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
-                      {theme.category_type}
-                    </span>
-                  </div>
-
-                  {/* Overlay - Just black overlay, no zoom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                  {/* Content on hover */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-end p-2 sm:p-4 opacity-0 transition-all duration-300 group-hover:opacity-100 z-20">
-                    <h3 className="font-secondary text-sm sm:text-base md:text-lg text-white mb-2 sm:mb-3 text-center">
-                      {theme.name}
-                    </h3>
-                    <div className="flex gap-1.5 sm:gap-2 w-full">
-                      <a
-                        href={theme.preview_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center space-x-1 rounded-full bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-secondary text-[#3F4D34] transition-all duration-200 hover:bg-[#3F4D34] hover:text-white hover:shadow-md"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                        <span>Preview</span>
-                      </a>
-                      <a
-                        href={`https://api.whatsapp.com/send?phone=6285179897917&text=${createWhatsAppMessage(
-                          theme
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center space-x-1 rounded-full bg-[#128C7E] px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-secondary text-white transition-all duration-200 hover:bg-[#0a6e5c] hover:shadow-md"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MessageCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                        <span>Pesan</span>
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Clickable overlay for direct theme URLs */}
-                  <button
-                    onClick={() => handleThemeSelect(theme)}
-                    className="absolute inset-0 z-10 opacity-0"
-                    aria-label={`Select ${theme.name}`}
-                  />
-                </div>
+                <ThemeCard key={theme.id} theme={theme} />
               ))}
             </div>
 

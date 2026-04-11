@@ -18,24 +18,26 @@ const useTheme = () => {
       setError(null);
 
       // Process themes from JSON
-      const processedThemes = themeData.map((theme) => {
-        const themeName = theme.name || "";
-        const hasPhoto = !themeName.includes("(Tanpa Foto)");
+      const processedThemes = themeData
+        .map((theme) => {
+          const themeName = theme.name || "";
+          const hasPhoto = !themeName.includes("(Tanpa Foto)");
 
-        return {
-          id: theme.ID,
-          name: themeName,
-          category:
-            typeof theme.category === "object"
-              ? theme.category?.title || "Uncategorized"
-              : theme.category_name || "Uncategorized",
-          image: theme.thumbnail || "",
-          demoUrl: theme.preview || "#",
-          withPhoto: hasPhoto,
-          price: 0,
-          description: "",
-        };
-      });
+          return {
+            id: theme.ID,
+            name: themeName,
+            category:
+              typeof theme.category === "object"
+                ? theme.category?.title || "Uncategorized"
+                : theme.category_name || "Uncategorized",
+            image: theme.thumbnail || "",
+            demoUrl: theme.preview || "#",
+            withPhoto: hasPhoto,
+            price: 0,
+            description: "",
+          };
+        })
+        .sort((a, b) => b.id - a.id);
 
       setThemes(processedThemes);
     } catch (err) {

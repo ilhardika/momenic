@@ -57,7 +57,6 @@ const Hero = () => {
         {/* Top Badge - Green accent */}
         <div className="mb-8 md:mb-12 opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
           <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#404C34]/30 backdrop-blur-sm border border-[#8FAD83]/30">
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E5E5E5] mr-1.5 sm:mr-2" />
             <span className="font-secondary text-[#E5E5E5] uppercase tracking-[0.12em] sm:tracking-[0.2em] text-xs sm:text-sm">
               Premium Digital Invitation
             </span>
