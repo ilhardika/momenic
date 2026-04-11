@@ -1,62 +1,41 @@
-import { Pencil, Clock, Music } from "lucide-react";
+﻿import { Pencil, Clock, Music } from "lucide-react";
 
 const benefits = [
   {
     icon: Pencil,
     label: "Free Revisi",
     desc: "Revisi konten undangan secara gratis sebelum disebarkan.",
-    number: "01",
   },
   {
     icon: Clock,
     label: "One Day Service",
     desc: "Selesai dalam 1 hari kerja setelah semua data lengkap diterima.",
-    number: "02",
   },
   {
     icon: Music,
     label: "Custom Backsound",
     desc: "Pilih lagu favorit untuk mengiringi undangan digitalmu.",
-    number: "03",
   },
 ];
 
 const Benefits = () => {
   return (
-    <section className="py-16 sm:py-20 px-4 bg-[#3F4D34] overflow-hidden">
-      <div className="container mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="mb-12 sm:mb-14">
-          <p className="font-secondary text-xs tracking-[0.2em] uppercase text-white/50 mb-3">
-            Keunggulan Kami
-          </p>
-          <h2 className="font-primary text-3xl sm:text-4xl text-white">
-            Kenapa Momenic?
-          </h2>
-        </div>
+    <section className="py-16 sm:py-20 px-4 bg-[#F7F8F4]">
+      <div className="container mx-auto max-w-4xl">
+        <h2 className="font-primary text-3xl sm:text-4xl text-[#3F4D34] text-center mb-12 sm:mb-16">
+          Kenapa Momenic?
+        </h2>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden">
-          {benefits.map(({ icon: Icon, label, desc, number }) => (
-            <div
-              key={label}
-              className="relative bg-[#3F4D34] p-8 group hover:bg-[#4e6040] transition-colors duration-300"
-            >
-              {/* Large faded number */}
-              <span className="absolute top-5 right-6 font-primary text-6xl text-white/[0.06] select-none leading-none">
-                {number}
-              </span>
-
-              {/* Icon */}
-              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-6 group-hover:bg-white/20 transition-colors duration-300">
-                <Icon className="w-5 h-5 text-white" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8">
+          {benefits.map(({ icon: Icon, label, desc }) => (
+            <div key={label} className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-[#3F4D34]/10 flex items-center justify-center mb-5">
+                <Icon className="w-6 h-6 text-[#3F4D34]" />
               </div>
-
-              {/* Text */}
-              <h3 className="font-secondary font-semibold text-lg text-white mb-2">
+              <h3 className="font-secondary font-bold text-sm uppercase tracking-wider text-[#3F4D34] mb-3 leading-snug">
                 {label}
               </h3>
-              <p className="font-secondary text-sm text-white/60 leading-relaxed">
+              <p className="font-secondary text-sm text-[#3F4D34]/60 leading-relaxed">
                 {desc}
               </p>
             </div>
