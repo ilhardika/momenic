@@ -69,7 +69,7 @@ const Hero = () => {
           {/* Main Content */}
           <div className="space-y-6 md:space-y-8 mb-8">
             <h1 className="font-primary text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-normal text-white leading-tight opacity-0 animate-[fadeIn_1s_ease-out_0.3s_forwards] drop-shadow-md">
-              Undangan Digital Express
+              Premium Digital Invitation
               <span className="block italic mt-1 sm:mt-2 text-[#E5E5E5] text-[20px] sm:text-[26px] md:text-[32px] opacity-0 animate-[fadeIn_1s_ease-out_0.6s_forwards]">
                 Premium, Murah, Fitur Lengkap
               </span>
