@@ -1,107 +1,64 @@
-import {
-  Infinity,
-  Users,
-  Pencil,
-  Clock,
-  Music,
-  BookOpenText,
-} from "lucide-react";
+import { Pencil, Clock, Music } from "lucide-react";
+
+const benefits = [
+  {
+    icon: Pencil,
+    label: "Free Revisi",
+    desc: "Revisi konten undangan secara gratis sebelum disebarkan.",
+    number: "01",
+  },
+  {
+    icon: Clock,
+    label: "One Day Service",
+    desc: "Selesai dalam 1 hari kerja setelah semua data lengkap diterima.",
+    number: "02",
+  },
+  {
+    icon: Music,
+    label: "Custom Backsound",
+    desc: "Pilih lagu favorit untuk mengiringi undangan digitalmu.",
+    number: "03",
+  },
+];
 
 const Benefits = () => {
-  const benefits = [
-    {
-      icon: <Infinity className="w-6 h-6" />,
-      title: "Aktif Selamanya",
-      description: "Undangan digitalmu akan selalu aktif tanpa batas waktu",
-    },
-    {
-      icon: <Users className="w-6 h-6" />,
-      title: "Unlimited Tamu",
-      description: "Kirim undangan ke semua tamu tanpa batasan jumlah",
-    },
-    {
-      icon: <BookOpenText className="w-6 h-6" />,
-      title: "Buku Tamu Digital",
-      description:
-        "Kenangan ucapan manis oleh tamu lewat teks atau video langsung di undangan digitalmu",
-    },
-    {
-      icon: <Pencil className="w-6 h-6" />,
-      title: "Free Revisi",
-      description: "Revisi konten undangan secara gratis sebelum disebarkan",
-    },
-    {
-      icon: <Clock className="w-6 h-6" />,
-      title: "One Day Service",
-      description:
-        "Proses pembuatan undangan selesai dalam satu hari kerja setelah data lengkap diterima",
-    },
-    {
-      icon: <Music className="w-6 h-6" />,
-      title: "Custom Music",
-      description: "Pilih musik favoritmu untuk mengiringi undangan",
-    },
-  ];
-
   return (
-    <section className="relative py-20 sm:py-28 px-4 overflow-hidden bg-white">
-      {/* Content container with relative position to appear above background */}
-      <div className="container mx-auto max-w-6xl relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-16 sm:mb-20">
-          <h2 className="font-primary text-3xl sm:text-4xl md:text-5xl text-[#3F4D34] mb-6">
-            Keuntungan Menggunakan Undangan Digital di Momenic
-          </h2>
-          <p className="font-secondary text-[#3F4D34]/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-            Dirancang untuk membantu Kamu menciptakan undangan digital yang
-            sempurna, sesuai dengan keinginan dan kebutuhan Kamu.
+    <section className="py-16 sm:py-20 px-4 bg-[#3F4D34] overflow-hidden">
+      <div className="container mx-auto max-w-5xl">
+        {/* Header */}
+        <div className="mb-12 sm:mb-14">
+          <p className="font-secondary text-xs tracking-[0.2em] uppercase text-white/50 mb-3">
+            Keunggulan Kami
           </p>
+          <h2 className="font-primary text-3xl sm:text-4xl text-white">
+            Kenapa Momenic?
+          </h2>
         </div>
 
-        {/* Benefits with Flexbox layout - matching Features component */}
-        <div className="flex flex-wrap justify-center max-w-4xl mx-auto">
-          {benefits.map((benefit, index) => (
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden">
+          {benefits.map(({ icon: Icon, label, desc, number }) => (
             <div
-              key={index}
-              className="w-1/2 md:w-1/3 px-2 sm:px-3 lg:px-4 mb-4 sm:mb-6 lg:mb-8"
+              key={label}
+              className="relative bg-[#3F4D34] p-8 group hover:bg-[#4e6040] transition-colors duration-300"
             >
-              <div className="group h-[170px] sm:h-[220px] w-full [perspective:1000px]">
-                <div
-                  className="relative h-full w-full transition-transform duration-500 
-                           [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]"
-                >
-                  {/* Front of card */}
-                  <div
-                    className="absolute inset-0 p-3 sm:p-6 rounded-2xl bg-white 
-                            border border-[#3F4D34]/10 hover:border-[#3F4D34]/20
-                            flex flex-col items-center justify-center text-center
-                            [backface-visibility:hidden]"
-                  >
-                    <div
-                      className="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-[#3F4D34]/10
-                              flex items-center justify-center mb-2 sm:mb-4
-                              transition-all duration-300 ease-in-out
-                              group-hover:scale-110"
-                    >
-                      <div className="text-[#3F4D34]">{benefit.icon}</div>
-                    </div>
-                    <h3 className="font-secondary text-sm sm:text-lg md:text-xl text-[#3F4D34]">
-                      {benefit.title}
-                    </h3>
-                  </div>
+              {/* Large faded number */}
+              <span className="absolute top-5 right-6 font-primary text-6xl text-white/[0.06] select-none leading-none">
+                {number}
+              </span>
 
-                  {/* Back of card */}
-                  <div
-                    className="absolute inset-0 p-3 sm:p-6 rounded-2xl bg-[#3F4D34]
-                            flex items-center justify-center text-center
-                            [backface-visibility:hidden] [transform:rotateX(180deg)]"
-                  >
-                    <p className="font-secondary text-white text-xs sm:text-base leading-relaxed">
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
+              {/* Icon */}
+              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-6 group-hover:bg-white/20 transition-colors duration-300">
+                <Icon className="w-5 h-5 text-white" />
               </div>
+
+              {/* Text */}
+              <h3 className="font-secondary font-semibold text-lg text-white mb-2">
+                {label}
+              </h3>
+              <p className="font-secondary text-sm text-white/60 leading-relaxed">
+                {desc}
+              </p>
             </div>
           ))}
         </div>

@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import logo from "../assets/website-icon.png";
+import { Link } from "react-router-dom";
+
+const navItems = [
+  { label: "Home", href: "/#home" },
+  { label: "Fitur", href: "/#fitur" },
+  { label: "Katalog", href: "/#katalog" },
+  { label: "Daftar Harga", href: "/#harga" },
+  { label: "Hubungi Admin", href: "https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo" },
+];
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,18 +52,15 @@ function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link
-            to="/tema?category=3D+Motion&withphoto=true"
-            className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-          >
-            Katalog
-          </Link>
-          <Link
-            to="/musik"
-            className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-          >
-            Musik
-          </Link>
+          {navItems.map(({ label, href }) => (
+            <a
+              key={href}
+              href={href}
+              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
+            >
+              {label}
+            </a>
+          ))}
         </div>
 
         {/* Mobile Menu Button */}
@@ -83,20 +88,16 @@ function Navbar() {
           }`}
         >
           <div className="flex flex-col pt-24 px-6 space-y-6">
-            <Link
-              to="/tema?category=3D+Motion&withphoto=true"
-              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              Katalog
-            </Link>
-            <Link
-              to="/musik"
-              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              Musik
-            </Link>
+            {navItems.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
+                onClick={() => setIsOpen(false)}
+              >
+                {label}
+              </a>
+            ))}
           </div>
         </div>
       </nav>

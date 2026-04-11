@@ -6,6 +6,7 @@
 @layer base {
   html {
     font-family: "DM Sans", sans-serif;
+    scroll-behavior: smooth;
   }
   h1,
   h2,
