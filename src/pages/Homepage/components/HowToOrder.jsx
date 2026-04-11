@@ -1,4 +1,4 @@
-import { MessageCircle, Palette, CreditCard, Sparkles } from "lucide-react";
+import { MessageCircle, Palette, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const HowToOrder = () => {
@@ -91,44 +91,7 @@ const HowToOrder = () => {
           </div>
         </div>
 
-        {/* Enhanced Promo Banner */}
-        <div className="mt-12 bg-[#3F4D34] rounded-2xl p-6 sm:p-8 text-center relative overflow-hidden font-secondary">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1 mb-4">
-              <Sparkles className="h-4 w-4 text-yellow-300" />
-              <span className="text-white text-sm">Promo Terbatas</span>
-            </div>
-            <h3 className="font-secondary text-2xl sm:text-3xl text-white mb-4">
-              Dapatkan Semua Fitur Premium
-            </h3>
-            <p className="text-white/90 text-sm sm:text-base mb-6 max-w-2xl mx-auto">
-              Undangan digital lengkap dengan fitur RSVP, Peta Lokasi, Amplop
-              Digital, Gallery Foto & Video, dan masih banyak lagi mulai dari
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-4">
-              <span className="text-white/75 text-base sm:text-lg line-through">
-                Rp 299.000
-              </span>
-              <span className="text-white text-2xl sm:text-4xl font-bold">
-                Rp 79.000
-              </span>
-            </div>
-            <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
-              <Link
-                to={"/pricelist"}
-                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-white text-[#3F4D34] font-secondary text-sm sm:text-base hover:bg-white/90 transition-colors"
-              >
-                <span>Lihat daftar harga</span>
-              </Link>
-              <Link
-                to={"/tema"}
-                className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-white text-[#3F4D34] font-secondary text-sm sm:text-base hover:bg-white/90 transition-colors"
-              >
-                <span>Lihat semua tema</span>
-              </Link>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   );

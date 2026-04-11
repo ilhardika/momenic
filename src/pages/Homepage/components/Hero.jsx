@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { MessageCircle, Sparkles, Headset } from "lucide-react";
+import { MessageCircle, Headset, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Import your hero images here
 import heroImage1 from "../../../assets/hero-1.webp";
@@ -98,7 +99,7 @@ const Hero = () => {
                 </a>
               </div>
 
-              {/* WhatsApp Button */}
+              {/* Lihat Katalog Button */}
               <div className="relative inline-block group opacity-0 animate-[fadeIn_1s_ease-out_1.2s_forwards] w-full sm:w-auto">
                 <div
                   className="absolute -inset-1 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse mb-5"
@@ -106,18 +107,16 @@ const Hero = () => {
                     background: "linear-gradient(to right, #404C34, #526444)",
                   }}
                 ></div>
-                <a
-                  href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20pesan%20Undangan%20Digital%20Website"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/tema"
                   className="relative inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-[#404C34] hover:bg-[#526444] text-white 
                            rounded-full transition-all duration-300 font-secondary font-medium text-base sm:text-lg
                            shadow-[0_4px_14px_0_rgba(64,76,52,0.4)] hover:shadow-[0_6px_20px_0_rgba(64,76,52,0.5)]
                            transform hover:-translate-y-0.5 group w-full sm:w-auto justify-center"
                 >
-                  <MessageCircle className="w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
-                  <span>Pesan Sekarang</span>
-                </a>
+                  <BookOpen className="w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
+                  <span>Lihat Katalog Undangan</span>
+                </Link>
               </div>
             </div>
           </div>

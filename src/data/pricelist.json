@@ -4,6 +4,7 @@
       "theme": "3D Motion",
       "discountPrice": 199000,
       "originalPrice": 399000,
+      "maxGallery": 30,
       "withoutPhoto": {
         "discountPrice": 169000,
         "originalPrice": 369000
@@ -17,6 +18,7 @@
       "theme": "Interaktif",
       "discountPrice": 199000,
       "originalPrice": 399000,
+      "maxGallery": 30,
       "withoutPhoto": {
         "discountPrice": 169000,
         "originalPrice": 369000
@@ -30,6 +32,7 @@
       "theme": "Art",
       "discountPrice": 149000,
       "originalPrice": 349000,
+      "maxGallery": 20,
       "withoutPhoto": {
         "discountPrice": 119000,
         "originalPrice": 319000
@@ -43,6 +46,7 @@
       "theme": "Luxury",
       "discountPrice": 149000,
       "originalPrice": 349000,
+      "maxGallery": 20,
       "details": {
         "unlimitedInvitations": true,
         "includesAllFeatures": true
@@ -52,6 +56,7 @@
       "theme": "Special",
       "discountPrice": 99000,
       "originalPrice": 299000,
+      "maxGallery": 10,
       "withoutPhoto": {
         "discountPrice": 79000,
         "originalPrice": 279000
@@ -66,6 +71,7 @@
       "theme": "Aqiqah",
       "discountPrice": 149000,
       "originalPrice": 349000,
+      "maxGallery": 10,
       "details": {
         "unlimitedInvitations": true,
         "includesAllFeatures": true
@@ -75,6 +81,7 @@
       "theme": "Khitan",
       "discountPrice": 149000,
       "originalPrice": 349000,
+      "maxGallery": 10,
       "details": {
         "unlimitedInvitations": true,
         "includesAllFeatures": true
