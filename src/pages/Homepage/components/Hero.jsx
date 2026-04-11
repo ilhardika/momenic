@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, Headset, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import { trackEvent } from "../../../utils/analytics";
 
 // Import your hero images here
 import heroImage1 from "../../../assets/hero-1.webp";
@@ -89,6 +90,7 @@ const Hero = () => {
                   href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20konsultasi%20gratis%20tentang%20Undangan%20Digital"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent("hero_konsultasi_click")}
                   className="relative inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-[#404C34]
                            rounded-full transition-all duration-300 font-secondary font-medium text-base sm:text-lg
                            shadow-md hover:shadow-lg border border-white/10
@@ -109,6 +111,7 @@ const Hero = () => {
                 ></div>
                 <Link
                   to="/tema"
+                  onClick={() => trackEvent("hero_katalog_click")}
                   className="relative inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-[#404C34] hover:bg-[#526444] text-white 
                            rounded-full transition-all duration-300 font-secondary font-medium text-base sm:text-lg
                            shadow-[0_4px_14px_0_rgba(64,76,52,0.4)] hover:shadow-[0_6px_20px_0_rgba(64,76,52,0.5)]

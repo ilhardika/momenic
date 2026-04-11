@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import useTheme from "../../../hooks/useTheme";
 import ThemeCard from "../../../components/ThemeCard";
+import { trackEvent } from "../../../utils/analytics";
 
 const Theme = () => {
   const [itemsToShow, setItemsToShow] = useState(6); // Show 6 items by default
@@ -220,8 +221,8 @@ const Theme = () => {
                     key={type}
                     onClick={() => {
                       setSelectedCategory(type);
-                      // Reset items to show when changing category
                       setItemsToShow(6);
+                      trackEvent("theme_category_filter", { category: type });
                     }}
                     className={`px-5 py-2.5 rounded-full font-secondary text-sm transition-all duration-300 whitespace-nowrap
                       ${
@@ -251,7 +252,7 @@ const Theme = () => {
                       ? "bg-[#3F4D34] text-white shadow-md"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
-                  onClick={() => setWithPhoto(true)}
+                  onClick={() => { setWithPhoto(true); trackEvent("theme_photo_filter", { filter: "dengan_foto" }); }}
                 >
                   Dengan Foto
                 </button>
@@ -261,7 +262,7 @@ const Theme = () => {
                       ? "bg-[#3F4D34] text-white shadow-md"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
-                  onClick={() => setWithPhoto(false)}
+                  onClick={() => { setWithPhoto(false); trackEvent("theme_photo_filter", { filter: "tanpa_foto" }); }}
                 >
                   Tanpa Foto
                 </button>
@@ -284,6 +285,7 @@ const Theme = () => {
               <div className="mt-12 flex justify-center">
                 <Link
                   to="/tema?category=3D+Motion&withphoto=true"
+                  onClick={() => trackEvent("theme_lihat_semua_click")}
                   className="px-8 py-3 bg-[#3F4D34] text-white rounded-full font-secondary transition-all duration-300 hover:bg-[#2c3823] focus:outline-none focus:ring-2 focus:ring-[#3F4D34] focus:ring-opacity-50 shadow-md hover:shadow-lg inline-flex items-center"
                 >
                   <span className="flex items-center">Lihat Semua Tema</span>

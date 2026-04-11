@@ -1,5 +1,6 @@
 import { MessageCircle, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import { trackEvent } from "../../../utils/analytics";
 
 const Consultation = () => {
   return (
@@ -18,6 +19,7 @@ const Consultation = () => {
             href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20konsultasi%20tentang%20undangan%20digital"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent("consultation_hubungi_click")}
             className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#3F4D34] text-white font-secondary rounded-full hover:bg-[#2c3823] transition-colors shadow-md"
           >
             <MessageCircle className="w-5 h-5" />
@@ -25,6 +27,7 @@ const Consultation = () => {
           </a>
           <Link
             to="/tema"
+            onClick={() => trackEvent("consultation_katalog_click")}
             className="inline-flex items-center justify-center gap-2 px-7 py-3 border border-[#3F4D34] text-[#3F4D34] font-secondary rounded-full hover:bg-[#3F4D34] hover:text-white transition-colors"
           >
             <BookOpen className="w-5 h-5" />

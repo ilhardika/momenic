@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram } from "lucide-react";
 import logo from "../assets/website-icon.png";
+import { trackEvent } from "../utils/analytics";
 
 const Footer = () => {
   return (
@@ -18,6 +19,7 @@ const Footer = () => {
             href="https://api.whatsapp.com/send?phone=6285179897917"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent("footer_wa_click")}
             className="hover:text-white transition-colors"
           >
             +6285179897917
@@ -27,6 +29,7 @@ const Footer = () => {
             href="https://instagram.com/momenic.id"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent("footer_ig_click")}
             className="flex items-center gap-1.5 hover:text-white transition-colors"
           >
             <Instagram className="w-4 h-4" />

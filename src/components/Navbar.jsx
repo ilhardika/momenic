@@ -2,6 +2,7 @@ import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import logo from "../assets/website-icon.png";
 import { Link } from "react-router-dom";
+import { trackEvent } from "../utils/analytics";
 
 const navItems = [
   { label: "Home", href: "/#home" },
@@ -51,16 +52,26 @@ function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
-          {navItems.map(({ label, href }) => (
+        <div className="hidden md:flex items-center divide-x divide-[#3F4D34]/20">
+          {navItems.slice(0, -1).map(({ label, href }) => (
             <a
               key={href}
               href={href}
-              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
+              onClick={() => trackEvent("nav_click", { link_label: label })}
+              className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200 px-4 py-1 text-sm"
             >
               {label}
             </a>
           ))}
+          <a
+            href={navItems[navItems.length - 1].href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent("nav_click", { link_label: "Hubungi Admin" })}
+            className="ml-3 font-secondary px-5 py-2 rounded-full bg-[#3F4D34] text-white text-sm hover:bg-[#526444] transition-colors duration-200 whitespace-nowrap"
+          >
+            {navItems[navItems.length - 1].label}
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -92,8 +103,11 @@ function Navbar() {
               <a
                 key={href}
                 href={href}
-                className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200"
-                onClick={() => setIsOpen(false)}
+                className="font-secondary text-[#3F4D34] hover:text-[#4A5B3E] transition-colors duration-200 border-b border-[#3F4D34]/10 pb-3"
+                onClick={() => {
+                  trackEvent("nav_click", { link_label: label });
+                  setIsOpen(false);
+                }}
               >
                 {label}
               </a>

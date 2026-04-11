@@ -4,6 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Search from "../../../components/Search";
 import ThemeCard from "../../../components/ThemeCard";
 import useTheme from "../../../hooks/useTheme";
+import { trackEvent } from "../../../utils/analytics";
 
 const ThemeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -235,14 +236,15 @@ const ThemeList = () => {
 
   // Handle category selection
   const handleCategorySelect = (category) => {
-    // When changing category, reset to default "with photo" state
     setWithPhoto(true);
     setSelectedCategory(category);
+    trackEvent("theme_category_filter", { category });
   };
 
   // Handle photo option toggle
   const handlePhotoToggle = (hasPhoto) => {
     setWithPhoto(hasPhoto);
+    trackEvent("theme_photo_filter", { filter: hasPhoto ? "dengan_foto" : "tanpa_foto" });
   };
 
 
@@ -408,7 +410,7 @@ const ThemeList = () => {
             {hasMoreItems && (
               <div className="mt-8 flex justify-center">
                 <button
-                  onClick={handleLoadMore}
+                  onClick={() => { handleLoadMore(); trackEvent("theme_load_more_click", { category: selectedCategory }); }}
                   disabled={loadingMore}
                   className="px-8 py-3 bg-[#3F4D34] text-white rounded-full font-secondary transition-all duration-300 hover:bg-[#2c3823] focus:outline-none focus:ring-2 focus:ring-[#3F4D34] focus:ring-opacity-50 disabled:opacity-70 shadow-md hover:shadow-lg"
                 >

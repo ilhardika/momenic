@@ -1,5 +1,6 @@
 import { MessageCircle, Palette, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
+import { trackEvent } from "../../../utils/analytics";
 
 const HowToOrder = () => {
   const steps = [
@@ -78,6 +79,7 @@ const HowToOrder = () => {
                         href={step.action.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => trackEvent("howtoorder_chat_click")}
                         className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-[#2d5c56] text-white font-secondary text-sm hover:bg-[#1b4e44] transition-colors"
                       >
                         <MessageCircle className="h-4 w-4" />
