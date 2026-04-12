@@ -19,6 +19,7 @@ const ThemeList = () => {
   const [itemsToShow, setItemsToShow] = useState(12);
   const [loadingMore, setLoadingMore] = useState(false);
 
+
   // Use the custom theme hook
   const {
     rawThemes, // Now using the correct unfiltered themes
@@ -31,6 +32,13 @@ const ThemeList = () => {
     categories,
     refetch,
   } = useTheme();
+
+  // Keep withPhoto in sync with URL param
+  useEffect(() => {
+    const urlWithPhoto = searchParams.get("withphoto");
+    if (urlWithPhoto === "true") setWithPhoto(true);
+    else if (urlWithPhoto === "false") setWithPhoto(false);
+  }, [searchParams, setWithPhoto]);
 
   // Transform and process themes from local JSON
   const themes = useMemo(() => {

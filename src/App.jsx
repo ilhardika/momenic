@@ -9,6 +9,7 @@ import ScrollToTop from "./components/ScrollToTop";
 // Lazy load non-critical pages
 const ThemePage = lazy(() => import("./pages/ThemePage"));
 const Music = lazy(() => import("./pages/Music"));
+const Ilustrasi = lazy(() => import("./pages/Ilustrasi"));
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/tema" element={<ThemePage />} />
             <Route path="/musik" element={<Music />} />
+            <Route path="/ilustrasi" element={<Ilustrasi />} />
           </Routes>
         </Suspense>
         <Footer />

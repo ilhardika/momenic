@@ -241,6 +241,9 @@ const Theme = () => {
             <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
           </div>
+          <p className="text-center font-secondary text-xs text-[#3F4D34]/40 -mt-2 mb-2 tracking-wide">
+            ← geser untuk lihat semua kategori →
+          </p>
 
           {/* Photo Toggle - Using same style as Pricelist */}
           {hasPhotoVariations && (
@@ -284,8 +287,8 @@ const Theme = () => {
             {hasMoreItems && (
               <div className="mt-12 flex justify-center">
                 <Link
-                  to="/tema?category=3D+Motion&withphoto=true"
-                  onClick={() => trackEvent("theme_lihat_semua_click")}
+                  to={`/tema?category=${encodeURIComponent(selectedCategory)}&withphoto=${withPhoto ? "true" : "false"}`}
+                  onClick={() => trackEvent("theme_lihat_semua_click", { category: selectedCategory, withphoto: withPhoto })}
                   className="px-8 py-3 bg-[#3F4D34] text-white rounded-full font-secondary transition-all duration-300 hover:bg-[#2c3823] focus:outline-none focus:ring-2 focus:ring-[#3F4D34] focus:ring-opacity-50 shadow-md hover:shadow-lg inline-flex items-center"
                 >
                   <span className="flex items-center">Lihat Semua Tema</span>

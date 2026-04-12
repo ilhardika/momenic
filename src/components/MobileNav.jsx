@@ -1,12 +1,12 @@
 import { useLocation, Link } from "react-router-dom";
-import { Home, Crown, Palette, Tag, MessageCircle } from "lucide-react";
+import { Home, Crown, Palette, Tag, ClipboardList } from "lucide-react";
 
 const items = [
   { label: "Home", icon: Home, href: "/#home", section: "home" },
   { label: "Fitur", icon: Crown, href: "/#fitur", section: "fitur" },
   { label: "Katalog", icon: Palette, href: "/#katalog", section: "katalog" },
   { label: "Harga", icon: Tag, href: "/#harga", section: "harga" },
-  { label: "Hubungi", icon: MessageCircle, href: "https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo", section: "hubungi", external: true },
+  { label: "Cara Pesan", icon: ClipboardList, href: "/#cara-pesan", section: "cara-pesan" },
 ];
 
 const MobileNav = () => {
