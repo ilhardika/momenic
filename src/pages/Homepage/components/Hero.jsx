@@ -90,7 +90,7 @@ const Hero = () => {
                   href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20konsultasi%20gratis%20tentang%20Undangan%20Digital"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackEvent("hero_konsultasi_click")}
+                  onClick={() => { trackEvent("hero_konsultasi_click"); if (typeof window.fbq === "function") window.fbq("track", "Lead", { content_name: "hero_konsultasi" }); }}
                   className="relative inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-[#404C34]
                            rounded-full transition-all duration-300 font-secondary font-medium text-base sm:text-lg
                            shadow-md hover:shadow-lg border border-white/10

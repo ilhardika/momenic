@@ -78,7 +78,7 @@ const ThemeCard = ({ theme }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-1 rounded-full border border-[#3F4D34] px-2 py-1.5 text-[10px] sm:text-xs font-secondary text-[#3F4D34] transition-colors hover:bg-[#3F4D34] hover:text-white"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); if (typeof window.fbq === "function") window.fbq("track", "ViewContent", { content_name: theme.name }); }}
           >
             <Eye className="h-3 w-3 shrink-0" />
             <span>Preview</span>
@@ -88,7 +88,7 @@ const ThemeCard = ({ theme }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-1 rounded-full bg-[#128C7E] px-2 py-1.5 text-[10px] sm:text-xs font-secondary text-white transition-colors hover:bg-[#0a6e5c]"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); if (typeof window.fbq === "function") window.fbq("track", "Purchase", { content_name: theme.name, currency: "IDR", value: price.discount }); }}
           >
             <MessageCircle className="h-3 w-3 shrink-0" />
             <span>Pesan</span>

@@ -19,7 +19,7 @@ const Consultation = () => {
             href="https://api.whatsapp.com/send?phone=6285179897917&text=Halo%20Minmo,%20saya%20ingin%20konsultasi%20tentang%20undangan%20digital"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent("consultation_hubungi_click")}
+            onClick={() => { trackEvent("consultation_hubungi_click"); if (typeof window.fbq === "function") window.fbq("track", "Lead", { content_name: "consultation_hubungi" }); }}
             className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#3F4D34] text-white font-secondary rounded-full hover:bg-[#2c3823] transition-colors shadow-md"
           >
             <MessageCircle className="w-5 h-5" />

@@ -286,6 +286,7 @@ function Pricelist() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-6 py-3 rounded-full bg-[#404C34] hover:bg-[#526444] text-white font-medium text-base transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            onClick={() => { if (typeof window.fbq === "function") window.fbq("track", "Lead", { content_name: "pricelist_konsultasi" }); }}
           >
             Konsultasi Gratis
           </a>
